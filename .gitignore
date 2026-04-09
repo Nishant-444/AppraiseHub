@@ -1,0 +1,54 @@
+### OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+### Logs
+*.log
+logs/
+
+### Environment files
+.env
+.env.*
+application.properties
+
+
+### IDE / Editor
+.idea/
+.vscode/
+*.iml
+*.swp
+*.swo
+
+### Java / Maven
+target/
+**/target/
+*.class
+*.jar
+*.war
+*.ear
+.mvn/wrapper/maven-wrapper.jar
+
+### Gradle (in case of future modules)
+.gradle/
+**/build/
+
+### Node / Next.js
+node_modules/
+.next/
+out/
+dist/
+.turbo/
+.cache/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+### Coverage
+coverage/
+
+### Runtime
+*.pid
+*.seed
+*.pid.lock

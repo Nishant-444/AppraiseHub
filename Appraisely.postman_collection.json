@@ -1,0 +1,586 @@
+{
+	"info": {
+		"_postman_id": "a1b2c3d4-e5f6-4a5b-bc6d-7e8f9a0b1c2d",
+		"name": "Appraisaly API",
+		"description": "Comprehensive collection for Appraisaly. Organized by roles (HR, Manager, Employee) and functional domains. Includes seeded data examples.\n\n### Authentication\nMost endpoints require a Bearer Token. Use the **Auth > Login** request to get a token. The collection is configured to automatically update the `{{token}}` variable upon successful login.\n\n### Default Roles & Users (from DatabaseSeeder)\n- **HR**: `hr@example.com` / `password123` (ID: 1)\n- **Manager (Eng)**: `eng.manager@example.com` / `password123` (ID: 2)\n- **Manager (Sales)**: `sales.manager@example.com` / `password123` (ID: 3)\n- **Employee (Alice)**: `alice.j@example.com` / `password123` (ID: 4)\n- **Employee (Bob)**: `bob.s@example.com` / `password123` (ID: 5)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Auth",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.success && jsonData.data && jsonData.data.token) {",
+									"    pm.collectionVariables.set(\"token\", jsonData.data.token);",
+									"    console.log(\"Token updated successfully\");",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"hr@example.com\",\n    \"password\": \"password123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "login"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current Profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/auth/me",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "me"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2. HR Actions",
+			"description": "Endpoints restricted to HR role.",
+			"item": [
+				{
+					"name": "Users",
+					"item": [
+						{
+							"name": "List All Users",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/users",
+									"host": ["{{base_url}}"],
+									"path": ["api", "users"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create User",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"fullName\": \"New Employee\",\n    \"email\": \"new.emp@example.com\",\n    \"password\": \"password123\",\n    \"role\": \"EMPLOYEE\",\n    \"jobTitle\": \"Developer\",\n    \"departmentId\": 1,\n    \"managerId\": 2\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/users",
+									"host": ["{{base_url}}"],
+									"path": ["api", "users"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update User",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"fullName\": \"Alice Updated\",\n    \"jobTitle\": \"Principal Developer\",\n    \"isActive\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/users/4",
+									"host": ["{{base_url}}"],
+									"path": ["api", "users", "4"]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Departments",
+					"item": [
+						{
+							"name": "List Departments",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/departments",
+									"host": ["{{base_url}}"],
+									"path": ["api", "departments"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Department",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Marketing\",\n    \"description\": \"Marketing and Communications department\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/departments",
+									"host": ["{{base_url}}"],
+									"path": ["api", "departments"]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Appraisals",
+					"item": [
+						{
+							"name": "List All Appraisals",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/appraisals",
+									"host": ["{{base_url}}"],
+									"path": ["api", "appraisals"]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Cycle Management",
+					"item": [
+						{
+							"name": "Bulk Create Cycle",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"cycleName\": \"Mid-Year 2025\",\n    \"cycleStartDate\": \"2025-06-01\",\n    \"cycleEndDate\": \"2025-12-31\",\n    \"departmentId\": null\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/appraisals/bulk",
+									"host": ["{{base_url}}"],
+									"path": ["api", "appraisals", "bulk"]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Reports",
+					"item": [
+						{
+							"name": "Cycle Summary",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/reports/cycle/Annual Review 2025/summary",
+									"host": ["{{base_url}}"],
+									"path": [
+										"api",
+										"reports",
+										"cycle",
+										"Annual Review 2025",
+										"summary"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Department Breakdown",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/reports/cycle/Annual Review 2025/departments",
+									"host": ["{{base_url}}"],
+									"path": [
+										"api",
+										"reports",
+										"cycle",
+										"Annual Review 2025",
+										"departments"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Rating Distribution",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/reports/cycle/Annual Review 2025/ratings",
+									"host": ["{{base_url}}"],
+									"path": [
+										"api",
+										"reports",
+										"cycle",
+										"Annual Review 2025",
+										"ratings"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "3. Manager Actions",
+			"description": "Endpoints typically used by Managers.",
+			"item": [
+				{
+					"name": "Appraisals",
+					"item": [
+						{
+							"name": "My Team Appraisals",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/appraisals/manager/2",
+									"host": ["{{base_url}}"],
+									"path": ["api", "appraisals", "manager", "2"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Submit Manager Review",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"managerStrengths\": \"Strong technical skills and good team player.\",\n    \"managerImprovements\": \"Needs to work on documentation speed.\",\n    \"managerComments\": \"Great year overall!\",\n    \"managerRating\": 4\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/appraisals/1/review?managerId=2",
+									"host": ["{{base_url}}"],
+									"path": ["api", "appraisals", "1", "review"],
+									"query": [
+										{
+											"key": "managerId",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Goals",
+					"item": [
+						{
+							"name": "Create Goal for Employee",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"appraisalId\": 1,\n    \"title\": \"Improve Code Quality\",\n    \"description\": \"Write unit tests for all new features.\",\n    \"dueDate\": \"2025-06-30\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/goals?managerId=2",
+									"host": ["{{base_url}}"],
+									"path": ["api", "goals"],
+									"query": [
+										{
+											"key": "managerId",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Team Report",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/reports/manager/2/team/Annual Review 2025",
+							"host": ["{{base_url}}"],
+							"path": [
+								"api",
+								"reports",
+								"manager",
+								"2",
+								"team",
+								"Annual Review 2025"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "4. Employee Actions",
+			"description": "Endpoints used by Employees.",
+			"item": [
+				{
+					"name": "My Appraisals",
+					"item": [
+						{
+							"name": "Get My Active Appraisals",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/appraisals/employee/4",
+									"host": ["{{base_url}}"],
+									"path": ["api", "appraisals", "employee", "4"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Submit Self Assessment",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"whatWentWell\": \"Successfully completed project X.\",\n    \"whatToImprove\": \"Public speaking.\",\n    \"achievements\": \"Lead developer on core module.\",\n    \"selfRating\": 4\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/appraisals/1/self-assessment?employeeId=4",
+									"host": ["{{base_url}}"],
+									"path": ["api", "appraisals", "1", "self-assessment"],
+									"query": [
+										{
+											"key": "employeeId",
+											"value": "4"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Acknowledge Appraisal",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/appraisals/1/acknowledge?employeeId=4",
+									"host": ["{{base_url}}"],
+									"path": ["api", "appraisals", "1", "acknowledge"],
+									"query": [
+										{
+											"key": "employeeId",
+											"value": "4"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "My Goals",
+					"item": [
+						{
+							"name": "Get My Goals",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/goals/employee/4",
+									"host": ["{{base_url}}"],
+									"path": ["api", "goals", "employee", "4"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Goal Progress",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"status\": \"COMPLETED\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/goals/1/progress?employeeId=4",
+									"host": ["{{base_url}}"],
+									"path": ["api", "goals", "1", "progress"],
+									"query": [
+										{
+											"key": "employeeId",
+											"value": "4"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "My Notifications",
+					"item": [
+						{
+							"name": "Get My Notifications",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/notifications?userId=4",
+									"host": ["{{base_url}}"],
+									"path": ["api", "notifications"],
+									"query": [
+										{
+											"key": "userId",
+											"value": "4"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Unread Count",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/notifications/unread-count?userId=4",
+									"host": ["{{base_url}}"],
+									"path": ["api", "notifications", "unread-count"],
+									"query": [
+										{
+											"key": "userId",
+											"value": "4"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [""]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [""]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
