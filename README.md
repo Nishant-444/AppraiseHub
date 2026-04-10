@@ -6,9 +6,9 @@
 **Version:** 0.0.1-SNAPSHOT  
 **Status:** Development  
 **Local API Endpoint:** [http://localhost:8080](http://localhost:8080)  
-**Tech Stack:** Java 17, Spring Boot 4, Spring Security, JPA/Hibernate, MySQL, JWT, Next.js 16, React 19, TypeScript, Tailwind CSS, Docker
+**Tech Stack:** Java 25, Spring Boot 4.0.4, Spring Security, JPA/Hibernate, MySQL, JWT, Next.js 16.2.0, React 19.2.4, TypeScript 5.7.3, Tailwind CSS 4.2, Docker
 
-![Java](https://img.shields.io/badge/Java-17-007396?style=for-the-badge&logo=java&logoColor=white)
+![Java](https://img.shields.io/badge/Java-25-007396?style=for-the-badge&logo=java&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0.4-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-4169E1?style=for-the-badge&logo=mysql&logoColor=white)
 ![JWT](https://img.shields.io/badge/JWT-Auth-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white)
@@ -44,17 +44,17 @@ Client UI (Next.js) -> Spring Boot API -> MySQL
 
 ## Core Technology Stack
 
-| Layer     | Technology                   | Version      | Purpose                               |
-| --------- | ---------------------------- | ------------ | ------------------------------------- |
-| Runtime   | OpenJDK                      | 17           | Backend runtime                       |
-| Framework | Spring Boot                  | 4.0.4        | REST API and dependency injection     |
-| Security  | Spring Security + JJWT       | 6.x + 0.12.6 | JWT authentication and RBAC           |
-| ORM       | Hibernate (JPA)              | 6            | Data persistence                      |
-| Database  | MySQL                        | 8+           | Relational data storage               |
-| Build     | Maven                        | -            | Backend build and packaging           |
-| Frontend  | Next.js + React + TypeScript | 16.2 + 19    | UI framework and type safety          |
-| Styling   | Tailwind CSS + Radix UI      | 4.2 + -      | UI styling and primitives             |
-| Container | Docker                       | -            | Local and production containerization |
+| Layer     | Technology                   | Version         | Purpose                               |
+| --------- | ---------------------------- | --------------- | ------------------------------------- |
+| Runtime   | OpenJDK                      | 25              | Backend runtime                       |
+| Framework | Spring Boot                  | 4.0.4           | REST API and dependency injection     |
+| Security  | Spring Security + JJWT       | 6.x + 0.12.6    | JWT authentication and RBAC           |
+| ORM       | Hibernate (JPA)              | 6               | Data persistence                      |
+| Database  | MySQL                        | 8+              | Relational data storage               |
+| Build     | Maven                        | -               | Backend build and packaging           |
+| Frontend  | Next.js + React + TypeScript | 16.2.0 + 19.2.4 | UI framework and type safety          |
+| Styling   | Tailwind CSS + Radix UI      | 4.2 + -         | UI styling and primitives             |
+| Container | Docker                       | -               | Local and production containerization |
 
 ---
 
@@ -98,7 +98,7 @@ The backend includes a multi-stage Docker build and a production compose file. S
 ### Prerequisites
 
 ```bash
-Java 17
+Java 25
 Maven (or Maven Wrapper)
 Node.js 18+
 MySQL 8+
