@@ -46,7 +46,7 @@ public class DataSeeder implements CommandLineRunner {
 
     Department engineering = departmentRepository.save(Department.builder()
         .name("Engineering")
-        .description("Builds and maintains the Appraisaly platform")
+        .description("Builds and maintains the AppraiseHub platform")
         .build());
 
     Department sales = departmentRepository.save(Department.builder()
@@ -64,9 +64,14 @@ public class DataSeeder implements CommandLineRunner {
         .description("Owns budgeting, payroll, and financial planning")
         .build());
 
+    Department leadership = departmentRepository.save(Department.builder()
+        .name("Leadership")
+        .description("Executive leadership and strategic alignment")
+        .build());
+
     User hrLead = userRepository.save(User.builder()
         .fullName("Renee Patel")
-        .email("hr@Appraisaly.io")
+        .email("hr@AppraiseHub.io")
         .password(defaultPassword)
         .role(Role.HR)
         .jobTitle("HR Lead")
@@ -74,39 +79,52 @@ public class DataSeeder implements CommandLineRunner {
         .isActive(true)
         .build());
 
+    User opsVp = userRepository.save(User.builder()
+        .fullName("Casey Roberts")
+        .email("casey.roberts@AppraiseHub.io")
+        .password(defaultPassword)
+        .role(Role.MANAGER)
+        .jobTitle("VP of Operations")
+        .department(leadership)
+        .isActive(true)
+        .build());
+
     User engManager = userRepository.save(User.builder()
         .fullName("Jordan Lee")
-        .email("jordan.lee@Appraisaly.io")
+        .email("jordan.lee@AppraiseHub.io")
         .password(defaultPassword)
         .role(Role.MANAGER)
         .jobTitle("Engineering Manager")
         .department(engineering)
+        .manager(opsVp)
         .isActive(true)
         .build());
 
     User salesManager = userRepository.save(User.builder()
         .fullName("Avery Nguyen")
-        .email("avery.nguyen@Appraisaly.io")
+        .email("avery.nguyen@AppraiseHub.io")
         .password(defaultPassword)
         .role(Role.MANAGER)
         .jobTitle("Sales Manager")
         .department(sales)
+        .manager(opsVp)
         .isActive(true)
         .build());
 
     User financeManager = userRepository.save(User.builder()
         .fullName("Priya Shah")
-        .email("priya.shah@Appraisaly.io")
+        .email("priya.shah@AppraiseHub.io")
         .password(defaultPassword)
         .role(Role.MANAGER)
         .jobTitle("Finance Manager")
         .department(finance)
+        .manager(opsVp)
         .isActive(true)
         .build());
 
     User eng1 = userRepository.save(User.builder()
         .fullName("Maya Torres")
-        .email("maya.torres@Appraisaly.io")
+        .email("maya.torres@AppraiseHub.io")
         .password(defaultPassword)
         .role(Role.EMPLOYEE)
         .jobTitle("Senior Software Engineer")
@@ -117,7 +135,7 @@ public class DataSeeder implements CommandLineRunner {
 
     User eng2 = userRepository.save(User.builder()
         .fullName("Noah Brooks")
-        .email("noah.brooks@Appraisaly.io")
+        .email("noah.brooks@AppraiseHub.io")
         .password(defaultPassword)
         .role(Role.EMPLOYEE)
         .jobTitle("Backend Engineer")
@@ -128,7 +146,7 @@ public class DataSeeder implements CommandLineRunner {
 
     User eng3 = userRepository.save(User.builder()
         .fullName("Kira Morales")
-        .email("kira.morales@Appraisaly.io")
+        .email("kira.morales@AppraiseHub.io")
         .password(defaultPassword)
         .role(Role.EMPLOYEE)
         .jobTitle("Product Engineer")
@@ -139,7 +157,7 @@ public class DataSeeder implements CommandLineRunner {
 
     User sales1 = userRepository.save(User.builder()
         .fullName("Elliot Price")
-        .email("elliot.price@Appraisaly.io")
+        .email("elliot.price@AppraiseHub.io")
         .password(defaultPassword)
         .role(Role.EMPLOYEE)
         .jobTitle("Account Executive")
@@ -150,7 +168,7 @@ public class DataSeeder implements CommandLineRunner {
 
     User sales2 = userRepository.save(User.builder()
         .fullName("Sofia Kim")
-        .email("sofia.kim@Appraisaly.io")
+        .email("sofia.kim@AppraiseHub.io")
         .password(defaultPassword)
         .role(Role.EMPLOYEE)
         .jobTitle("Sales Development Rep")
@@ -161,7 +179,7 @@ public class DataSeeder implements CommandLineRunner {
 
     User finance1 = userRepository.save(User.builder()
         .fullName("Liam Osei")
-        .email("liam.osei@Appraisaly.io")
+        .email("liam.osei@AppraiseHub.io")
         .password(defaultPassword)
         .role(Role.EMPLOYEE)
         .jobTitle("Financial Analyst")
@@ -234,6 +252,21 @@ public class DataSeeder implements CommandLineRunner {
         .appraisalStatus(AppraisalStatus.PENDING)
         .build());
 
+    Appraisal engManagerH1 = appraisalRepository.save(Appraisal.builder()
+        .cycleName("2026 H1")
+        .cycleStartDate(h1Start)
+        .cycleEndDate(h1End)
+        .cycleStatus(CycleStatus.ACTIVE)
+        .employee(engManager)
+        .manager(opsVp)
+        .whatWentWell("Aligned roadmap execution and reduced incident backlog.")
+        .whatToImprove("Increase coaching touchpoints with senior engineers.")
+        .achievements("Hired 3 engineers and shipped performance improvements.")
+        .selfRating(4)
+        .appraisalStatus(AppraisalStatus.SELF_SUBMITTED)
+        .submittedAt(LocalDateTime.of(2026, 3, 18, 10, 0))
+        .build());
+
     Appraisal sales1H1 = appraisalRepository.save(Appraisal.builder()
         .cycleName("2026 H1")
         .cycleStartDate(h1Start)
@@ -264,6 +297,21 @@ public class DataSeeder implements CommandLineRunner {
         .submittedAt(LocalDateTime.of(2026, 3, 2, 11, 0))
         .build());
 
+    Appraisal salesManagerH1 = appraisalRepository.save(Appraisal.builder()
+        .cycleName("2026 H1")
+        .cycleStartDate(h1Start)
+        .cycleEndDate(h1End)
+        .cycleStatus(CycleStatus.ACTIVE)
+        .employee(salesManager)
+        .manager(opsVp)
+        .managerStrengths("Strong pipeline coverage and coaching of new reps.")
+        .managerImprovements("Create tighter weekly forecast cadence.")
+        .managerComments("Solid leadership through a busy quarter.")
+        .managerRating(4)
+        .appraisalStatus(AppraisalStatus.MANAGER_REVIEWED)
+        .submittedAt(LocalDateTime.of(2026, 2, 26, 15, 30))
+        .build());
+
     Appraisal finance1H1 = appraisalRepository.save(Appraisal.builder()
         .cycleName("2026 H1")
         .cycleStartDate(h1Start)
@@ -282,6 +330,21 @@ public class DataSeeder implements CommandLineRunner {
         .appraisalStatus(AppraisalStatus.APPROVED)
         .submittedAt(LocalDateTime.of(2026, 2, 5, 9, 0))
         .approvedAt(LocalDateTime.of(2026, 2, 18, 13, 30))
+        .build());
+
+    Appraisal financeManagerH1 = appraisalRepository.save(Appraisal.builder()
+        .cycleName("2026 H1")
+        .cycleStartDate(h1Start)
+        .cycleEndDate(h1End)
+        .cycleStatus(CycleStatus.ACTIVE)
+        .employee(financeManager)
+        .manager(opsVp)
+        .whatWentWell("Improved forecasting accuracy and stakeholder visibility.")
+        .whatToImprove("Drive more automation in month-end close.")
+        .achievements("Implemented new budget review cadence across departments.")
+        .selfRating(4)
+        .appraisalStatus(AppraisalStatus.SELF_SUBMITTED)
+        .submittedAt(LocalDateTime.of(2026, 3, 6, 9, 45))
         .build());
 
     goalRepository.saveAll(List.of(
@@ -340,6 +403,33 @@ public class DataSeeder implements CommandLineRunner {
             .dueDate(LocalDate.of(2026, 5, 31))
             .build(),
         Goal.builder()
+            .appraisal(engManagerH1)
+            .employee(engManager)
+            .title("Increase team delivery predictability")
+            .description("Improve sprint planning and reduce carryover by 20%.")
+            .progressPercent(45)
+            .status(Goal.Status.IN_PROGESS)
+            .dueDate(LocalDate.of(2026, 6, 20))
+            .build(),
+        Goal.builder()
+            .appraisal(salesManagerH1)
+            .employee(salesManager)
+            .title("Launch manager enablement playbook")
+            .description("Standardize coaching and enablement for new reps.")
+            .progressPercent(65)
+            .status(Goal.Status.IN_PROGESS)
+            .dueDate(LocalDate.of(2026, 5, 25))
+            .build(),
+        Goal.builder()
+            .appraisal(financeManagerH1)
+            .employee(financeManager)
+            .title("Automate finance dashboard updates")
+            .description("Reduce manual reporting effort by 30%.")
+            .progressPercent(30)
+            .status(Goal.Status.IN_PROGESS)
+            .dueDate(LocalDate.of(2026, 6, 5))
+            .build(),
+        Goal.builder()
             .appraisal(finance1H1)
             .employee(finance1)
             .title("Automate monthly close checklist")
@@ -370,6 +460,13 @@ public class DataSeeder implements CommandLineRunner {
             .message("Your manager review is complete for 2026 H1.")
             .type(Notification.Type.MANAGER_REVIEW_DONE)
             .isRead(true)
+            .build(),
+        Notification.builder()
+            .user(opsVp)
+            .title("Manager self-assessments submitted")
+            .message("3 manager self-assessments are ready for review this cycle.")
+            .type(Notification.Type.APPRAISAL_DUE)
+            .isRead(false)
             .build(),
         Notification.builder()
             .user(hrLead)

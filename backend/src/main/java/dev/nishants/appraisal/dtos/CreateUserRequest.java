@@ -11,22 +11,22 @@ import lombok.Setter;
 @Setter
 public class CreateUserRequest {
 
-    @NotBlank(message = "Full name is required")
-    private String fullName;
+  @NotBlank(message = "Full name is required")
+  private String fullName;
 
-    @NotBlank(message = "Email is required")
-    @Email(message = "Must be a valid email")
-    private String email;
+  @NotBlank(message = "Email is required")
+  @Email(message = "Must be a valid email")
+  private String email;
 
-    @NotBlank(message = "Password is required")
-    private String password;
+  @NotBlank(message = "Password is required")
+  private String password;
 
-    @NotNull(message = "Role is required")
-    private Role role;
+  @NotNull(message = "Role is required")
+  private Role role;
 
-    private String jobTitle;
+  private String jobTitle;
 
-    private Long departmentId;
+  private Long departmentId;
 
-    private Long managerId;
+  private Long managerId;
 }

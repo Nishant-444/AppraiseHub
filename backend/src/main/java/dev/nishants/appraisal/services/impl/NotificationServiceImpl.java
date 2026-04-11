@@ -1,22 +1,23 @@
 package dev.nishants.appraisal.services.impl;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import dev.nishants.appraisal.config.EmailTemplateService;
+import dev.nishants.appraisal.dtos.NotificationPayload;
 import dev.nishants.appraisal.dtos.NotificationResponse;
 import dev.nishants.appraisal.entity.Notification;
 import dev.nishants.appraisal.entity.User;
 import dev.nishants.appraisal.entity.Notification.Type;
 import dev.nishants.appraisal.exception.ResourceNotFoundException;
 import dev.nishants.appraisal.exception.UnauthorizedAccessException;
+import dev.nishants.appraisal.mappers.NotificationMapper;
 import dev.nishants.appraisal.repository.NotificationRepository;
 import dev.nishants.appraisal.repository.UserRepository;
+import dev.nishants.appraisal.services.AuthorizationService;
 import dev.nishants.appraisal.services.EmailService;
 import dev.nishants.appraisal.services.NotificationService;
 
@@ -25,22 +26,28 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class NotificationServiceImpl implements NotificationService {
 
   private final NotificationRepository notificationRepository;
   private final UserRepository userRepository;
   private final EmailService emailService;
   private final EmailTemplateService emailTemplateService;
+  private final AuthorizationService authorizationService;
 
   @Override
   @Async
-  public void send(Long userId, String title, String message, Type type) {
+  public void send(Long userId, String title, String message, Type type,
+      NotificationPayload payload) {
+    sendInternal(userId, title, message, type, payload);
+  }
+
+  private void sendInternal(Long userId, String title, String message, Type type,
+      NotificationPayload payload) {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new ResourceNotFoundException("User", userId));
 
     // 1. Send email before persisting the notification
-    sendEmailForType(user, title, message, type);
+    sendEmailForType(user, title, message, type, payload);
 
     // 2. Save in-app notification only after email succeeds
     Notification notification = Notification.builder()
@@ -57,18 +64,18 @@ public class NotificationServiceImpl implements NotificationService {
   @Override
   @Transactional(readOnly = true)
   public List<NotificationResponse> getMyNotifications(Long userId) {
-    requireSameUser(userId);
+    authorizationService.requireSelf(userId, "Access denied: you can only access your notifications");
     return notificationRepository
         .findByUserIdOrderByCreatedAtDesc(userId)
         .stream()
-        .map(this::toResponse)
+        .map(NotificationMapper::toResponse)
         .collect(Collectors.toList());
   }
 
   @Override
   @Transactional
   public NotificationResponse markAsRead(Long notificationId, Long userId) {
-    requireSameUser(userId);
+    authorizationService.requireSelf(userId, "Access denied: you can only access your notifications");
     Notification notification = notificationRepository.findById(notificationId)
         .orElseThrow(() -> new ResourceNotFoundException("Notification not found"));
 
@@ -78,13 +85,13 @@ public class NotificationServiceImpl implements NotificationService {
 
     notification.setRead(true);
     notificationRepository.save(notification);
-    return toResponse(notification);
+    return NotificationMapper.toResponse(notification);
   }
 
   @Override
   @Transactional
   public void markAllAsRead(Long userId) {
-    requireSameUser(userId);
+    authorizationService.requireSelf(userId, "Access denied: you can only access your notifications");
     List<Notification> unread = notificationRepository.findByUserIdAndIsReadFalse(userId);
     unread.forEach(n -> n.setRead(true));
     notificationRepository.saveAll(unread);
@@ -93,46 +100,43 @@ public class NotificationServiceImpl implements NotificationService {
   @Override
   @Transactional(readOnly = true)
   public long countUnread(Long userId) {
-    requireSameUser(userId);
+    authorizationService.requireSelf(userId, "Access denied: you can only access your notifications");
     return notificationRepository.countByUserIdAndIsReadFalse(userId);
-  }
-
-  private void requireSameUser(Long userId) {
-    User currentUser = getCurrentUser();
-    if (!currentUser.getId().equals(userId)) {
-      throw new UnauthorizedAccessException("Access denied: you can only access your notifications");
-    }
-  }
-
-  private User getCurrentUser() {
-    String email = SecurityContextHolder.getContext().getAuthentication().getName();
-    return userRepository.findByEmailWithDetails(email)
-        .orElseThrow(() -> new UnauthorizedAccessException("Access denied: user not found"));
   }
 
   // ── Email dispatcher ──────────────────────────────────────────
   // Matches the notification type to the right email template
-  private void sendEmailForType(User user, String title, String message, Type type) {
+  private void sendEmailForType(User user, String title, String message, Type type,
+      NotificationPayload payload) {
+    String cycleName = resolveValue(
+        payload != null ? payload.getCycleName() : null,
+        extractCycleName(message));
+    String employeeName = resolveValue(
+        payload != null ? payload.getEmployeeName() : null,
+        extractEmployeeName(message));
+    String startDate = payload != null ? payload.getStartDate() : "";
+    String endDate = payload != null ? payload.getEndDate() : "";
+
     String htmlBody = switch (type) {
       case CYCLE_STARTED ->
         emailTemplateService.cycleStarted(
             user.getFullName(),
-            extractCycleName(message),
-            "", "" // dates not in message — send generic version
-        );
+            cycleName,
+            startDate,
+            endDate);
       case SELF_ASSESSMENT_SUBMITTED ->
         emailTemplateService.selfAssessmentSubmitted(
             user.getFullName(),
-            extractEmployeeName(message),
-            extractCycleName(message));
+            employeeName,
+            cycleName);
       case MANAGER_REVIEW_DONE ->
         emailTemplateService.managerReviewDone(
             user.getFullName(),
-            extractCycleName(message));
+            cycleName);
       case APPRAISAL_APPROVED ->
         emailTemplateService.appraisalApproved(
             user.getFullName(),
-            extractCycleName(message));
+            cycleName);
       default ->
         buildGenericEmail(user.getFullName(), title, message);
     };
@@ -172,21 +176,17 @@ public class NotificationServiceImpl implements NotificationService {
             <p>Hi <strong>%s</strong>,</p>
             <p>%s</p>
             <p style="color:#9ca3af;font-size:12px;margin-top:32px;">
-              This is an automated message from Appraisaly.
+              This is an automated message from AppraiseHub.
             </p>
           </div>
         </body></html>
         """.formatted(title, name, message);
   }
 
-  private NotificationResponse toResponse(Notification notification) {
-    NotificationResponse response = new NotificationResponse();
-    response.setId(notification.getId());
-    response.setTitle(notification.getTitle());
-    response.setMessage(notification.getMessage());
-    response.setType(notification.getType());
-    response.setRead(notification.isRead());
-    response.setCreatedAt(notification.getCreatedAt());
-    return response;
+  private String resolveValue(String preferred, String fallback) {
+    if (preferred != null && !preferred.isBlank()) {
+      return preferred;
+    }
+    return fallback == null ? "" : fallback;
   }
 }

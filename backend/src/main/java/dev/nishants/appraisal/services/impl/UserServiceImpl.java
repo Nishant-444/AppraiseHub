@@ -3,7 +3,6 @@ package dev.nishants.appraisal.services.impl;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,9 +14,10 @@ import dev.nishants.appraisal.entity.User;
 import dev.nishants.appraisal.entity.enums.Role;
 import dev.nishants.appraisal.exception.DuplicateResourceException;
 import dev.nishants.appraisal.exception.ResourceNotFoundException;
-import dev.nishants.appraisal.exception.UnauthorizedAccessException;
+import dev.nishants.appraisal.mappers.UserMapper;
 import dev.nishants.appraisal.repository.DepartmentRepository;
 import dev.nishants.appraisal.repository.UserRepository;
+import dev.nishants.appraisal.services.AuthorizationService;
 import dev.nishants.appraisal.services.UserService;
 
 import java.util.List;
@@ -30,6 +30,7 @@ public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
   private final DepartmentRepository departmentRepository;
   private final PasswordEncoder passwordEncoder;
+  private final AuthorizationService authorizationService;
 
   @Override
   @Transactional
@@ -72,56 +73,51 @@ public class UserServiceImpl implements UserService {
     }
 
     userRepository.save(user);
-    return mapToResponse(user);
+    return UserMapper.toResponse(user);
   }
 
   @Override
   @Transactional(readOnly = true)
   public UserResponse getMe(Long userId) {
-    User currentUser = getCurrentUser();
-    if (currentUser.getRole() != Role.HR && !currentUser.getId().equals(userId)) {
-      throw new UnauthorizedAccessException("Access denied: you can only view your own profile");
-    }
-    return mapToResponse(findById(userId));
+    authorizationService.requireSelfOrHr(userId,
+        "Access denied: you can only view your own profile");
+    return UserMapper.toResponse(findById(userId));
   }
 
   @Override
   @Transactional(readOnly = true)
   public UserResponse getUserById(Long userId) {
-    User currentUser = getCurrentUser();
-    if (currentUser.getRole() != Role.HR && !currentUser.getId().equals(userId)) {
-      throw new UnauthorizedAccessException("Access denied: you can only view your own profile");
-    }
-    return mapToResponse(findById(userId));
+    authorizationService.requireSelfOrHr(userId,
+        "Access denied: you can only view your own profile");
+    return UserMapper.toResponse(findById(userId));
   }
 
   @Override
   @Transactional(readOnly = true)
   public List<UserResponse> getAllUsers() {
-    requireHr(getCurrentUser());
+    authorizationService.requireHr();
     return userRepository.findAllWithDetails()
         .stream()
-        .map(this::mapToResponse)
+        .map(UserMapper::toResponse)
         .collect(Collectors.toList());
   }
 
   @Override
   @Transactional(readOnly = true)
   public List<UserResponse> getTeamByManager(Long managerId) {
-    User currentUser = getCurrentUser();
-    if (currentUser.getRole() != Role.HR && !currentUser.getId().equals(managerId)) {
-      throw new UnauthorizedAccessException("Access denied: you can only view your own team");
-    }
+    authorizationService.requireSelfOrHr(
+        managerId,
+        "Access denied: you can only view your own team");
     return userRepository.findByManagerId(managerId)
         .stream()
-        .map(this::mapToResponse)
+        .map(UserMapper::toResponse)
         .collect(Collectors.toList());
   }
 
   @Override
   @Transactional
   public UserResponse updateUser(Long userId, UpdateUserRequest request) {
-    requireHr(getCurrentUser());
+    authorizationService.requireHr();
     User user = findById(userId);
 
     if (request.getFullName() != null)
@@ -144,53 +140,20 @@ public class UserServiceImpl implements UserService {
     }
 
     userRepository.save(user);
-    return mapToResponse(user);
+    return UserMapper.toResponse(user);
   }
 
   @Override
   @Transactional
   public void deleteUser(Long userId) {
-    requireHr(getCurrentUser());
+    authorizationService.requireHr();
     User user = findById(userId);
     user.setActive(false);
     userRepository.save(user);
   }
 
-  private User getCurrentUser() {
-    String email = SecurityContextHolder.getContext().getAuthentication().getName();
-    return userRepository.findByEmailWithDetails(email)
-        .orElseThrow(() -> new UnauthorizedAccessException("Access denied: user not found"));
-  }
-
-  private void requireHr(User user) {
-    if (user.getRole() != Role.HR) {
-      throw new UnauthorizedAccessException("Access denied: HR role required");
-    }
-  }
-
   private User findById(Long id) {
     return userRepository.findByIdWithDetails(id)
         .orElseThrow(() -> new ResourceNotFoundException("User", id));
-  }
-
-  private UserResponse mapToResponse(User user) {
-    UserResponse response = new UserResponse();
-    response.setId(user.getId());
-    response.setFullName(user.getFullName());
-    response.setEmail(user.getEmail());
-    response.setRole(user.getRole());
-    response.setJobTitle(user.getJobTitle());
-    response.setActive(user.isActive());
-    response.setCreatedAt(user.getCreatedAt());
-
-    if (user.getDepartment() != null) {
-      response.setDepartmentName(user.getDepartment().getName());
-    }
-    if (user.getManager() != null) {
-      response.setManagerId(user.getManager().getId());
-      response.setManagerName(user.getManager().getFullName());
-    }
-
-    return response;
   }
 }

@@ -6,7 +6,7 @@ export interface ApiResponse<T> {
 }
 
 // User & Auth
-export type Role = 'HR' | 'MANAGER' | 'EMPLOYEE';
+export type Role = "HR" | "MANAGER" | "EMPLOYEE";
 
 export interface User {
 	id: number;
@@ -70,15 +70,15 @@ export interface Department {
 
 // Appraisal
 export type AppraisalStatus =
-	| 'PENDING'
-	| 'EMPLOYEE_DRAFT'
-	| 'SELF_SUBMITTED'
-	| 'MANAGER_DRAFT'
-	| 'MANAGER_REVIEWED'
-	| 'APPROVED'
-	| 'ACKNOWLEDGED';
+	| "PENDING"
+	| "EMPLOYEE_DRAFT"
+	| "SELF_SUBMITTED"
+	| "MANAGER_DRAFT"
+	| "MANAGER_REVIEWED"
+	| "APPROVED"
+	| "ACKNOWLEDGED";
 
-export type CycleStatus = 'DRAFT' | 'ACTIVE' | 'CLOSED';
+export type CycleStatus = "DRAFT" | "ACTIVE" | "CLOSED";
 
 export interface Appraisal {
 	id: number;
@@ -115,6 +115,14 @@ export interface BulkCycleRequest {
 	departmentId?: number | null;
 }
 
+export interface CreateAppraisalRequest {
+	cycleName: string;
+	cycleStartDate: string;
+	cycleEndDate: string;
+	employeeId: number;
+	managerId: number;
+}
+
 export interface BulkCycleResponse {
 	cycleName: string;
 	totalEmployees: number;
@@ -139,10 +147,10 @@ export interface ManagerReviewRequest {
 
 // Goal
 export type GoalStatus =
-	| 'NOT_STARTED'
-	| 'IN_PROGRESS'
-	| 'COMPLETED'
-	| 'CANCELLED';
+	| "NOT_STARTED"
+	| "IN_PROGRESS"
+	| "COMPLETED"
+	| "CANCELLED";
 
 export interface Goal {
 	id: number;

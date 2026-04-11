@@ -8,6 +8,7 @@ import type {
 	Department,
 	Appraisal,
 	BulkCycleRequest,
+	CreateAppraisalRequest,
 	BulkCycleResponse,
 	SelfAssessmentRequest,
 	ManagerReviewRequest,
@@ -19,28 +20,28 @@ import type {
 	DepartmentBreakdown,
 	RatingDistribution,
 	TeamReport,
-} from './types';
+} from "./types";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
 
 class ApiClient {
 	private token: string | null = null;
 
 	setToken(token: string | null) {
 		this.token = token;
-		if (typeof window !== 'undefined') {
+		if (typeof window !== "undefined") {
 			if (token) {
-				localStorage.setItem('appraisal_token', token);
+				localStorage.setItem("appraisal_token", token);
 			} else {
-				localStorage.removeItem('appraisal_token');
+				localStorage.removeItem("appraisal_token");
 			}
 		}
 	}
 
 	getToken(): string | null {
 		if (this.token) return this.token;
-		if (typeof window !== 'undefined') {
-			this.token = localStorage.getItem('appraisal_token');
+		if (typeof window !== "undefined") {
+			this.token = localStorage.getItem("appraisal_token");
 		}
 		return this.token;
 	}
@@ -51,12 +52,12 @@ class ApiClient {
 	): Promise<ApiResponse<T>> {
 		const token = this.getToken();
 		const headers: HeadersInit = {
-			'Content-Type': 'application/json',
+			"Content-Type": "application/json",
 			...options.headers,
 		};
 
 		if (token) {
-			(headers as Record<string, string>)['Authorization'] = `Bearer ${token}`;
+			(headers as Record<string, string>)["Authorization"] = `Bearer ${token}`;
 		}
 
 		const response = await fetch(`${API_BASE}${endpoint}`, {
@@ -70,24 +71,24 @@ class ApiClient {
 
 	// Auth
 	async login(credentials: LoginRequest): Promise<ApiResponse<LoginResponse>> {
-		return this.request<LoginResponse>('/auth/login', {
-			method: 'POST',
+		return this.request<LoginResponse>("/auth/login", {
+			method: "POST",
 			body: JSON.stringify(credentials),
 		});
 	}
 
 	async getProfile(): Promise<ApiResponse<LoginResponse>> {
-		return this.request<LoginResponse>('/auth/me');
+		return this.request<LoginResponse>("/auth/me");
 	}
 
 	// Users (HR only)
 	async getUsers(): Promise<ApiResponse<User[]>> {
-		return this.request<User[]>('/users');
+		return this.request<User[]>("/users");
 	}
 
 	async createUser(user: CreateUserRequest): Promise<ApiResponse<User>> {
-		return this.request<User>('/users', {
-			method: 'POST',
+		return this.request<User>("/users", {
+			method: "POST",
 			body: JSON.stringify(user),
 		});
 	}
@@ -97,27 +98,27 @@ class ApiClient {
 		user: UpdateUserRequest,
 	): Promise<ApiResponse<User>> {
 		return this.request<User>(`/users/${id}`, {
-			method: 'PUT',
+			method: "PUT",
 			body: JSON.stringify(user),
 		});
 	}
 
 	async deleteUser(id: number): Promise<ApiResponse<void>> {
 		return this.request<void>(`/users/${id}`, {
-			method: 'DELETE',
+			method: "DELETE",
 		});
 	}
 
 	// Departments (HR only)
 	async getDepartments(): Promise<ApiResponse<Department[]>> {
-		return this.request<Department[]>('/departments');
+		return this.request<Department[]>("/departments");
 	}
 
 	async createDepartment(
 		dept: Partial<Department>,
 	): Promise<ApiResponse<Department>> {
-		return this.request<Department>('/departments', {
-			method: 'POST',
+		return this.request<Department>("/departments", {
+			method: "POST",
 			body: JSON.stringify(dept),
 		});
 	}
@@ -136,7 +137,7 @@ class ApiClient {
 	}
 
 	async getAllAppraisals(): Promise<ApiResponse<Appraisal[]>> {
-		return this.request<Appraisal[]>('/appraisals');
+		return this.request<Appraisal[]>("/appraisals");
 	}
 
 	async getAppraisalById(
@@ -151,8 +152,17 @@ class ApiClient {
 	async createBulkCycle(
 		data: BulkCycleRequest,
 	): Promise<ApiResponse<BulkCycleResponse>> {
-		return this.request<BulkCycleResponse>('/appraisals/cycle/bulk-create', {
-			method: 'POST',
+		return this.request<BulkCycleResponse>("/appraisals/cycle/bulk-create", {
+			method: "POST",
+			body: JSON.stringify(data),
+		});
+	}
+
+	async createAppraisal(
+		data: CreateAppraisalRequest,
+	): Promise<ApiResponse<Appraisal>> {
+		return this.request<Appraisal>("/appraisals", {
+			method: "POST",
 			body: JSON.stringify(data),
 		});
 	}
@@ -165,7 +175,7 @@ class ApiClient {
 		return this.request<Appraisal>(
 			`/appraisals/${appraisalId}/self-assessment/draft?employeeId=${employeeId}`,
 			{
-				method: 'PUT',
+				method: "PUT",
 				body: JSON.stringify(data),
 			},
 		);
@@ -179,7 +189,7 @@ class ApiClient {
 		return this.request<Appraisal>(
 			`/appraisals/${appraisalId}/self-assessment/submit?employeeId=${employeeId}`,
 			{
-				method: 'PUT',
+				method: "PUT",
 				body: JSON.stringify(data),
 			},
 		);
@@ -193,7 +203,7 @@ class ApiClient {
 		return this.request<Appraisal>(
 			`/appraisals/${appraisalId}/manager-review/draft?managerId=${managerId}`,
 			{
-				method: 'PUT',
+				method: "PUT",
 				body: JSON.stringify(data),
 			},
 		);
@@ -207,7 +217,7 @@ class ApiClient {
 		return this.request<Appraisal>(
 			`/appraisals/${appraisalId}/manager-review/submit?managerId=${managerId}`,
 			{
-				method: 'PUT',
+				method: "PUT",
 				body: JSON.stringify(data),
 			},
 		);
@@ -215,7 +225,7 @@ class ApiClient {
 
 	async approveAppraisal(appraisalId: number): Promise<ApiResponse<Appraisal>> {
 		return this.request<Appraisal>(`/appraisals/${appraisalId}/approve`, {
-			method: 'PATCH',
+			method: "PATCH",
 		});
 	}
 
@@ -226,7 +236,7 @@ class ApiClient {
 		return this.request<Appraisal>(
 			`/appraisals/${appraisalId}/acknowledge?employeeId=${employeeId}`,
 			{
-				method: 'PATCH',
+				method: "PATCH",
 			},
 		);
 	}
@@ -245,7 +255,7 @@ class ApiClient {
 		data: CreateGoalRequest,
 	): Promise<ApiResponse<Goal>> {
 		return this.request<Goal>(`/goals?managerId=${managerId}`, {
-			method: 'POST',
+			method: "POST",
 			body: JSON.stringify(data),
 		});
 	}
@@ -258,7 +268,7 @@ class ApiClient {
 		return this.request<Goal>(
 			`/goals/${goalId}/progress?employeeId=${employeeId}`,
 			{
-				method: 'PATCH',
+				method: "PATCH",
 				body: JSON.stringify(data),
 			},
 		);
@@ -269,7 +279,7 @@ class ApiClient {
 		managerId: number,
 	): Promise<ApiResponse<void>> {
 		return this.request<void>(`/goals/${goalId}?managerId=${managerId}`, {
-			method: 'DELETE',
+			method: "DELETE",
 		});
 	}
 
@@ -289,14 +299,14 @@ class ApiClient {
 		return this.request<void>(
 			`/notifications/${notificationId}/read?userId=${userId}`,
 			{
-				method: 'PATCH',
+				method: "PATCH",
 			},
 		);
 	}
 
 	async markAllNotificationsRead(userId: number): Promise<ApiResponse<void>> {
 		return this.request<void>(`/notifications/read-all?userId=${userId}`, {
-			method: 'PATCH',
+			method: "PATCH",
 		});
 	}
 

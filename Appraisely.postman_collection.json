@@ -1,8 +1,8 @@
 {
 	"info": {
 		"_postman_id": "a1b2c3d4-e5f6-4a5b-bc6d-7e8f9a0b1c2d",
-		"name": "Appraisaly API",
-		"description": "Comprehensive collection for Appraisaly. Organized by roles (HR, Manager, Employee) and functional domains. Includes seeded data examples.\n\n### Authentication\nMost endpoints require a Bearer Token. Use the **Auth > Login** request to get a token. The collection is configured to automatically update the `{{token}}` variable upon successful login.\n\n### Default Roles & Users (from DatabaseSeeder)\n- **HR**: `hr@example.com` / `password123` (ID: 1)\n- **Manager (Eng)**: `eng.manager@example.com` / `password123` (ID: 2)\n- **Manager (Sales)**: `sales.manager@example.com` / `password123` (ID: 3)\n- **Employee (Alice)**: `alice.j@example.com` / `password123` (ID: 4)\n- **Employee (Bob)**: `bob.s@example.com` / `password123` (ID: 5)",
+		"name": "AppraiseHub API",
+		"description": "Comprehensive collection for AppraiseHub. Organized by roles (HR, Manager, Employee) and functional domains. Includes seeded data examples.\n\n### Authentication\nMost endpoints require a Bearer Token. Use the **Auth > Login** request to get a token. The collection is configured to automatically update the `{{token}}` variable upon successful login.\n\n### Default Roles & Users (from DatabaseSeeder)\n- **HR**: `hr@example.com` / `password123` (ID: 1)\n- **Manager (Eng)**: `eng.manager@example.com` / `password123` (ID: 2)\n- **Manager (Sales)**: `sales.manager@example.com` / `password123` (ID: 3)\n- **Employee (Alice)**: `alice.j@example.com` / `password123` (ID: 4)\n- **Employee (Bob)**: `bob.s@example.com` / `password123` (ID: 5)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [

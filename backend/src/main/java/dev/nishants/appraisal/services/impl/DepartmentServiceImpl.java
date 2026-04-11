@@ -10,6 +10,7 @@ import dev.nishants.appraisal.dtos.DepartmentResponse;
 import dev.nishants.appraisal.entity.Department;
 import dev.nishants.appraisal.exception.DuplicateResourceException;
 import dev.nishants.appraisal.exception.ResourceNotFoundException;
+import dev.nishants.appraisal.mappers.DepartmentMapper;
 import dev.nishants.appraisal.repository.DepartmentRepository;
 import dev.nishants.appraisal.services.DepartmentService;
 
@@ -36,7 +37,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         .build();
 
     departmentRepository.save(department);
-    return toResponse(department);
+    return DepartmentMapper.toResponse(department);
   }
 
   @Override
@@ -44,7 +45,7 @@ public class DepartmentServiceImpl implements DepartmentService {
   public DepartmentResponse getDepartmentById(Long id) {
     Department dept = departmentRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Department", id));
-    return toResponse(dept);
+    return DepartmentMapper.toResponse(dept);
   }
 
   @Override
@@ -52,7 +53,7 @@ public class DepartmentServiceImpl implements DepartmentService {
   public List<DepartmentResponse> getAllDepartments() {
     return departmentRepository.findAll()
         .stream()
-        .map(this::toResponse)
+        .map(DepartmentMapper::toResponse)
         .collect(Collectors.toList());
   }
 
@@ -68,7 +69,7 @@ public class DepartmentServiceImpl implements DepartmentService {
       dept.setDescription(request.getDescription());
 
     departmentRepository.save(dept);
-    return toResponse(dept);
+    return DepartmentMapper.toResponse(dept);
   }
 
   @Override
@@ -77,13 +78,5 @@ public class DepartmentServiceImpl implements DepartmentService {
     Department dept = departmentRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Department", id));
     departmentRepository.delete(dept);
-  }
-
-  private DepartmentResponse toResponse(Department department) {
-    DepartmentResponse response = new DepartmentResponse();
-    response.setId(department.getId());
-    response.setName(department.getName());
-    response.setDescription(department.getDescription());
-    return response;
   }
 }

@@ -2,7 +2,6 @@ package dev.nishants.appraisal.services.impl;
 
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,13 +11,12 @@ import dev.nishants.appraisal.entity.Department;
 import dev.nishants.appraisal.entity.Goal;
 import dev.nishants.appraisal.entity.User;
 import dev.nishants.appraisal.entity.enums.AppraisalStatus;
-import dev.nishants.appraisal.entity.enums.Role;
 import dev.nishants.appraisal.exception.ResourceNotFoundException;
-import dev.nishants.appraisal.exception.UnauthorizedAccessException;
 import dev.nishants.appraisal.repository.AppraisalRepository;
 import dev.nishants.appraisal.repository.DepartmentRepository;
 import dev.nishants.appraisal.repository.GoalRepository;
 import dev.nishants.appraisal.repository.UserRepository;
+import dev.nishants.appraisal.services.AuthorizationService;
 import dev.nishants.appraisal.services.ReportService;
 
 import java.util.*;
@@ -33,13 +31,14 @@ public class ReportServiceImpl implements ReportService {
   private final GoalRepository goalRepository;
   private final UserRepository userRepository;
   private final DepartmentRepository departmentRepository;
+  private final AuthorizationService authorizationService;
 
   // ── Cycle Summary ─────────────────────────────────────────────
 
   @Override
   @Transactional(readOnly = true)
   public CycleSummaryResponse getCycleSummary(String cycleName) {
-    requireHr(getCurrentUser());
+    authorizationService.requireHr();
     List<Object[]> rows = appraisalRepository.countByStatusForCycle(cycleName);
 
     long pending = 0, employeeDraft = 0, selfSubmitted = 0,
@@ -87,7 +86,7 @@ public class ReportServiceImpl implements ReportService {
   @Override
   @Transactional(readOnly = true)
   public List<DepartmentReportResponse> getDepartmentReport(String cycleName) {
-    requireHr(getCurrentUser());
+    authorizationService.requireHr();
     List<Department> departments = departmentRepository.findAll();
     List<Appraisal> cycleAppraisals = appraisalRepository.findByCycleName(cycleName);
 
@@ -146,7 +145,7 @@ public class ReportServiceImpl implements ReportService {
   @Override
   @Transactional(readOnly = true)
   public RatingDistributionResponse getRatingDistribution(String cycleName) {
-    requireHr(getCurrentUser());
+    authorizationService.requireHr();
     List<Object[]> rows = appraisalRepository.getRatingDistribution(cycleName);
 
     Map<Integer, Long> distribution = new LinkedHashMap<>();
@@ -177,7 +176,7 @@ public class ReportServiceImpl implements ReportService {
   @Override
   @Transactional(readOnly = true)
   public PendingReportResponse getPendingReport(String cycleName) {
-    requireHr(getCurrentUser());
+    authorizationService.requireHr();
     List<Appraisal> pending = appraisalRepository.findPendingAppraisalsForCycle(cycleName);
 
     List<PendingReportResponse.PendingEntry> entries = pending.stream()
@@ -204,10 +203,9 @@ public class ReportServiceImpl implements ReportService {
   @Override
   @Transactional(readOnly = true)
   public TeamReportResponse getTeamReport(String cycleName, Long managerId) {
-    User currentUser = getCurrentUser();
-    if (currentUser.getRole() != Role.HR && !currentUser.getId().equals(managerId)) {
-      throw new UnauthorizedAccessException("Access denied: you can only view your own team report");
-    }
+    authorizationService.requireSelfOrHr(
+        managerId,
+        "Access denied: you can only view your own team report");
     List<Appraisal> appraisals = appraisalRepository.findTeamAppraisalsForCycle(cycleName, managerId);
     Double teamAvg = appraisalRepository.averageRatingForTeam(cycleName, managerId);
 
@@ -244,10 +242,9 @@ public class ReportServiceImpl implements ReportService {
   @Override
   @Transactional(readOnly = true)
   public EmployeeHistoryResponse getEmployeeHistory(Long employeeId) {
-    User currentUser = getCurrentUser();
-    if (currentUser.getRole() != Role.HR && !currentUser.getId().equals(employeeId)) {
-      throw new UnauthorizedAccessException("Access denied: you can only view your own history");
-    }
+    authorizationService.requireSelfOrHr(
+        employeeId,
+        "Access denied: you can only view your own history");
     List<Appraisal> history = appraisalRepository.findEmployeeHistory(employeeId);
 
     String employeeName = history.isEmpty()
@@ -275,15 +272,4 @@ public class ReportServiceImpl implements ReportService {
         .build();
   }
 
-  private User getCurrentUser() {
-    String email = SecurityContextHolder.getContext().getAuthentication().getName();
-    return userRepository.findByEmailWithDetails(email)
-        .orElseThrow(() -> new UnauthorizedAccessException("Access denied: user not found"));
-  }
-
-  private void requireHr(User user) {
-    if (user.getRole() != Role.HR) {
-      throw new UnauthorizedAccessException("Access denied: HR role required");
-    }
-  }
 }
