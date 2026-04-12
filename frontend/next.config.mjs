@@ -6,8 +6,9 @@ const nextConfig = {
   images: {
     unoptimized: true,
   }
+  // ,
   // devIndicators: {
-  //   buildActivity: true,
+  //   buildActivity: false,
   // }
 }
 

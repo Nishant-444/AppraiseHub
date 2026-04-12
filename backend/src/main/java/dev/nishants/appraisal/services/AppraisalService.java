@@ -11,39 +11,40 @@ import dev.nishants.appraisal.dtos.SelfAssessmentRequest;
 
 public interface AppraisalService {
 
-    // HR: view all appraisals across all cycles
-    List<AppraisalResponse> getAllAppraisals();
+  // flow of an appraisal->
+  // HR -> create appraisal
+  AppraisalResponse createAppraisal(CreateAppraisalRequest request);
 
-    // HR: create a new appraisal for an employee in a cycle
-    AppraisalResponse createAppraisal(CreateAppraisalRequest request);
+  // HR -> view all appraisals
+  List<AppraisalResponse> getAllAppraisals();
 
-    // HR: bulk create one appraisal per active employee for a cycle
-    BulkCycleResponse createBulkCycle(BulkCycleRequest request);
+  // HR -> create bulk cycle
+  BulkCycleResponse createBulkCycle(BulkCycleRequest request);
 
-    // Employee: view all their own appraisals
-    List<AppraisalResponse> getMyAppraisals(Long employeeId);
+  // Employee -> view their own appraisals
+  List<AppraisalResponse> getMyAppraisals(Long employeeId);
 
-    // Manager: view all appraisals for their team
-    List<AppraisalResponse> getTeamAppraisals(Long managerId);
+  // Manager -> view appraisals of their team
+  List<AppraisalResponse> getTeamAppraisals(Long managerId);
 
-    // Any role: view one appraisal by ID (with ownership check)
-    AppraisalResponse getAppraisalById(Long appraisalId, Long requesterId);
+  // View appraisal details (for employee, manager, or HR based on requester role)
+  AppraisalResponse getAppraisalById(Long appraisalId, Long requesterId);
 
-    // Employee: save draft — status stays EMPLOYEE_DRAFT, no notification
-    AppraisalResponse saveSelfAssessmentDraft(Long appraisalId, SelfAssessmentRequest request, Long employeeId);
+  // Employee -> save self-assessment draft, no notification
+  AppraisalResponse saveSelfAssessmentDraft(Long appraisalId, SelfAssessmentRequest request, Long employeeId);
 
-    // Employee: final submit — status moves to SELF_SUBMITTED, notifies manager
-    AppraisalResponse submitSelfAssessment(Long appraisalId, SelfAssessmentRequest request, Long employeeId);
+  // Employee -> final submit self-assessment,notification to manager
+  AppraisalResponse submitSelfAssessment(Long appraisalId, SelfAssessmentRequest request, Long employeeId);
 
-    // Manager: save draft — status stays MANAGER_DRAFT, no notification
-    AppraisalResponse saveManagerReviewDraft(Long appraisalId, ManagerReviewRequest request, Long managerId);
+  // Manager -> save manager review draft, no notification
+  AppraisalResponse saveManagerReviewDraft(Long appraisalId, ManagerReviewRequest request, Long managerId);
 
-    // Manager: final submit — status moves to MANAGER_REVIEWED, notifies HR + employee
-    AppraisalResponse submitManagerReview(Long appraisalId, ManagerReviewRequest request, Long managerId);
+  // Manager -> final submit manager review, notification to employee and HR
+  AppraisalResponse submitManagerReview(Long appraisalId, ManagerReviewRequest request, Long managerId);
 
-    // HR: approve final appraisal — moves status to APPROVED
-    AppraisalResponse approveAppraisal(Long appraisalId);
+  // HR -> approve appraisal, notification to employee and manager
+  AppraisalResponse approveAppraisal(Long appraisalId);
 
-    // Employee: acknowledge result — moves status to ACKNOWLEDGED
-    AppraisalResponse acknowledgeAppraisal(Long appraisalId, Long employeeId);
+  // Employee -> acknowledge appraisal, notification to HR and manager
+  AppraisalResponse acknowledgeAppraisal(Long appraisalId, Long employeeId);
 }
