@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 public class EmailTemplateService {
   private static final String COMPANY_NAME = "AppraiseHub";
 
-  // ── Appraisal cycle started ───────────────────────────────────
+  // Appraisal cycle started
   public String cycleStarted(String employeeName, String cycleName,
       String startDate, String endDate) {
     return base(
@@ -18,7 +18,7 @@ public class EmailTemplateService {
         "Please log in and complete your self-assessment before the deadline.");
   }
 
-  // ── Self-assessment submitted (to manager) ────────────────────
+  // Self-assessment submitted (to manager)
   public String selfAssessmentSubmitted(String managerName, String employeeName,
       String cycleName) {
     return base(
@@ -31,7 +31,7 @@ public class EmailTemplateService {
         "Your timely review helps keep the appraisal process on track.");
   }
 
-  // ── Manager review done (to employee) ────────────────────────
+  // Manager review done (to employee)
   public String managerReviewDone(String employeeName, String cycleName) {
     return base(
         "Your appraisal has been reviewed",
@@ -43,7 +43,7 @@ public class EmailTemplateService {
         "You will receive another notification once HR has approved the results.");
   }
 
-  // ── Appraisal approved (to employee) ─────────────────────────
+  // Appraisal approved (to employee)
   public String appraisalApproved(String employeeName, String cycleName) {
     return base(
         "Your appraisal result is ready",
@@ -54,7 +54,7 @@ public class EmailTemplateService {
         "Once you have reviewed the results, please acknowledge receipt.");
   }
 
-  // ── Appraisal acknowledged (confirmation to employee) ────────
+  // Appraisal acknowledged (confirmation to employee)
   public String appraisalAcknowledged(String employeeName, String cycleName) {
     return base(
         "Appraisal acknowledged — cycle complete",
@@ -66,7 +66,7 @@ public class EmailTemplateService {
         "Your appraisal record has been saved.");
   }
 
-  // ── Base HTML template (minimal) ──────────────────────────────
+  // Base HTML template (minimal)
   private String base(String heading, String recipientName, String cta,
       String... lines) {
     StringBuilder body = new StringBuilder();
