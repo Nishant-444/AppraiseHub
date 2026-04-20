@@ -18,6 +18,8 @@ public interface UserService {
 
   List<UserResponse> getTeamByManager(Long managerId);
 
+  List<UserResponse> getMyTeam();
+
   UserResponse updateUser(Long userId, UpdateUserRequest request);
 
   void deleteUser(Long userId);

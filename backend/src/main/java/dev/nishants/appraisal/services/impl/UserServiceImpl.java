@@ -14,6 +14,7 @@ import dev.nishants.appraisal.entity.User;
 import dev.nishants.appraisal.entity.enums.Role;
 import dev.nishants.appraisal.exception.DuplicateResourceException;
 import dev.nishants.appraisal.exception.ResourceNotFoundException;
+import dev.nishants.appraisal.exception.UnauthorizedAccessException;
 import dev.nishants.appraisal.mappers.UserMapper;
 import dev.nishants.appraisal.repository.DepartmentRepository;
 import dev.nishants.appraisal.repository.UserRepository;
@@ -110,6 +111,32 @@ public class UserServiceImpl implements UserService {
         "Access denied: you can only view your own team");
     return userRepository.findByManagerId(managerId)
         .stream()
+        .map(UserMapper::toResponse)
+        .collect(Collectors.toList());
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public List<UserResponse> getMyTeam() {
+    User currentUser = authorizationService.currentUser();
+    if (currentUser.getRole() == Role.HR) {
+      throw new UnauthorizedAccessException("Access denied: HR users do not have a team view");
+    }
+
+    if (currentUser.getRole() == Role.MANAGER) {
+      return userRepository.findByManagerId(currentUser.getId())
+          .stream()
+          .map(UserMapper::toResponse)
+          .collect(Collectors.toList());
+    }
+
+    if (currentUser.getManager() == null) {
+      return List.of();
+    }
+
+    return userRepository.findByManagerId(currentUser.getManager().getId())
+        .stream()
+        .filter(user -> !user.getId().equals(currentUser.getId()))
         .map(UserMapper::toResponse)
         .collect(Collectors.toList());
   }

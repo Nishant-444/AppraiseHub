@@ -86,6 +86,10 @@ class ApiClient {
 		return this.request<User[]>("/users");
 	}
 
+	async getMyTeam(): Promise<ApiResponse<User[]>> {
+		return this.request<User[]>("/users/team");
+	}
+
 	async createUser(user: CreateUserRequest): Promise<ApiResponse<User>> {
 		return this.request<User>("/users", {
 			method: "POST",

@@ -1,3 +1,6 @@
+"use client";
+
+import { useAuth } from "@/lib/auth-context";
 import {
 	Card,
 	CardContent,
@@ -60,6 +63,19 @@ const formTips = [
 ];
 
 export default function HowToUsePage() {
+	const { user } = useAuth();
+
+	if (!user) return null;
+	if (user.role !== "EMPLOYEE") {
+		return (
+			<div className="py-12 text-center">
+				<p className="text-muted-foreground">
+					How to Use is available for employees only.
+				</p>
+			</div>
+		);
+	}
+
 	return (
 		<div className="space-y-8">
 			<div>

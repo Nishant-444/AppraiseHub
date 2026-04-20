@@ -56,6 +56,12 @@ const navItems: NavItem[] = [
 		roles: ["MANAGER", "EMPLOYEE"],
 	},
 	{
+		href: "/dashboard/team",
+		label: "Team",
+		icon: Users,
+		roles: ["MANAGER", "EMPLOYEE"],
+	},
+	{
 		href: "/dashboard/reports",
 		label: "Reports",
 		icon: BarChart3,
@@ -102,7 +108,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 	const filteredNavItems = navItems.filter((item) =>
 		item.roles.includes(user.role),
 	);
-	const showHowToUse = ["HR", "MANAGER", "EMPLOYEE"].includes(user.role);
+	const showHowToUse = user.role === "EMPLOYEE";
 	const navIconClassName = "mr-2 flex h-5 w-5 items-center justify-center";
 
 	const handleLogout = () => {

@@ -18,6 +18,7 @@ import dev.nishants.appraisal.entity.Notification.Type;
 import dev.nishants.appraisal.entity.enums.AppraisalStatus;
 import dev.nishants.appraisal.entity.enums.CycleStatus;
 import dev.nishants.appraisal.entity.enums.Role;
+import dev.nishants.appraisal.exception.DuplicateResourceException;
 import dev.nishants.appraisal.exception.InvalidStatusTransitionException;
 import dev.nishants.appraisal.exception.UnauthorizedAccessException;
 import dev.nishants.appraisal.mappers.AppraisalMapper;
@@ -27,6 +28,7 @@ import dev.nishants.appraisal.services.AppraisalService;
 import dev.nishants.appraisal.services.AuthorizationService;
 import dev.nishants.appraisal.services.NotificationService;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,9 +56,19 @@ public class AppraisalServiceImpl implements AppraisalService {
   @Override
   @Transactional
   public AppraisalResponse createAppraisal(CreateAppraisalRequest request) {
+    validateCycleYear(request.getCycleName(), request.getCycleStartDate(), request.getCycleEndDate());
+
+    LocalDate yearStart = getYearStart(request.getCycleStartDate());
+    LocalDate yearEnd = getYearEnd(request.getCycleStartDate());
+    if (appraisalRepository.existsByEmployeeIdAndCycleStartDateBetween(
+        request.getEmployeeId(), yearStart, yearEnd)) {
+      throw new DuplicateResourceException("Employee already has an appraisal cycle for year "
+          + request.getCycleStartDate().getYear());
+    }
+
     if (appraisalRepository.existsByCycleNameAndEmployeeId(
         request.getCycleName(), request.getEmployeeId())) {
-      throw new RuntimeException("Appraisal already exists for this employee in cycle: "
+      throw new DuplicateResourceException("Appraisal already exists for this employee in cycle: "
           + request.getCycleName());
     }
 
@@ -95,6 +107,10 @@ public class AppraisalServiceImpl implements AppraisalService {
   @Override
   @Transactional
   public BulkCycleResponse createBulkCycle(BulkCycleRequest request) {
+    validateCycleYear(request.getCycleName(), request.getCycleStartDate(), request.getCycleEndDate());
+    LocalDate yearStart = getYearStart(request.getCycleStartDate());
+    LocalDate yearEnd = getYearEnd(request.getCycleStartDate());
+
     // Fetch all active users who have a manager (both EMPLOYEE and MANAGER roles)
     List<User> employees = request.getDepartmentId() != null
         ? userRepository.findByDepartmentIdAndIsActiveTrue(request.getDepartmentId())
@@ -113,8 +129,8 @@ public class AppraisalServiceImpl implements AppraisalService {
         skippedNoManager++;
         continue;
       }
-      if (appraisalRepository.existsByCycleNameAndEmployeeId(
-          request.getCycleName(), employee.getId())) {
+      if (appraisalRepository.existsByEmployeeIdAndCycleStartDateBetween(
+          employee.getId(), yearStart, yearEnd)) {
         skippedAlreadyExists++;
         continue;
       }
@@ -146,6 +162,41 @@ public class AppraisalServiceImpl implements AppraisalService {
 
     return new BulkCycleResponse(request.getCycleName(), employees.size(),
         created, skippedAlreadyExists, skippedNoManager);
+  }
+
+  private void validateCycleYear(String cycleName, LocalDate startDate, LocalDate endDate) {
+    LocalDate yearStart = getYearStart(startDate);
+    LocalDate yearEnd = getYearEnd(startDate);
+    List<String> existingCycleNames = appraisalRepository
+        .findDistinctCycleNamesInYear(yearStart, yearEnd);
+
+    if (!existingCycleNames.isEmpty() && !existingCycleNames.contains(cycleName)) {
+      throw new DuplicateResourceException("An appraisal cycle already exists for year "
+          + startDate.getYear() + ": " + existingCycleNames.get(0));
+    }
+
+    if (existingCycleNames.size() > 1) {
+      throw new DuplicateResourceException("Multiple appraisal cycles already exist for year "
+          + startDate.getYear() + ". Please resolve before creating a new cycle.");
+    }
+
+    appraisalRepository.findFirstByCycleNameAndCycleStartDateBetween(
+        cycleName, yearStart, yearEnd)
+        .ifPresent(existing -> {
+          if (!existing.getCycleStartDate().equals(startDate)
+              || !existing.getCycleEndDate().equals(endDate)) {
+            throw new DuplicateResourceException("Cycle dates must match existing cycle '" +
+                cycleName + "'.");
+          }
+        });
+  }
+
+  private LocalDate getYearStart(LocalDate cycleStartDate) {
+    return LocalDate.of(cycleStartDate.getYear(), 1, 1);
+  }
+
+  private LocalDate getYearEnd(LocalDate cycleStartDate) {
+    return LocalDate.of(cycleStartDate.getYear(), 12, 31);
   }
 
   // ── Read ──────────────────────────────────────────────────────
