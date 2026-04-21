@@ -13,18 +13,15 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Compress backend project files for transfer
-        run: |
-          cd backend
-          tar -czf ../deploy.tar.gz src pom.xml .mvn mvnw Dockerfile docker-compose.yml
 
-      - name: Copy archive to EC2
+
+      - name: Copy backend directory to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          source: "deploy.tar.gz"
+          source: "backend"
           target: "/home/${{ secrets.EC2_USERNAME }}/appraisehub"
 
       - name: Execute Docker Compose via SSH
@@ -34,17 +31,11 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            # 1. Navigate to the project directory
-            mkdir -p /home/${{ secrets.EC2_USERNAME }}/appraisehub
-            cd /home/${{ secrets.EC2_USERNAME }}/appraisehub
+            # 1. Navigate to the backend project directory
+            cd /home/${{ secrets.EC2_USERNAME }}/appraisehub/backend
 
-            # 2. Extract the fresh code and remove the archive
-            tar -xzf deploy.tar.gz
-            rm deploy.tar.gz
-
-            # 3. Build the new image and recreate containers without downtime
-            # The -d flag runs it in the background
+            # 2. Build the new image and recreate containers without downtime
             docker compose up --build -d
 
-            # 4. Clean up dangling images from previous builds to prevent disk exhaustion
+            # 3. Clean up dangling images from previous builds to prevent disk exhaustion
             docker image prune -f
