@@ -1,0 +1,49 @@
+name: Production Deployment (Docker)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy-backend-ec2:
+    name: Deploy to EC2
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Compress project files for transfer
+        # We tar the files to speed up the SCP transfer and avoid moving the heavy .git folder
+        run: tar -czf deploy.tar.gz src pom.xml .mvn mvnw Dockerfile docker-compose.yml
+
+      - name: Copy archive to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "deploy.tar.gz"
+          target: "/home/${{ secrets.EC2_USERNAME }}/appraisehub"
+
+      - name: Execute Docker Compose via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            # 1. Navigate to the project directory
+            mkdir -p /home/${{ secrets.EC2_USERNAME }}/appraisehub
+            cd /home/${{ secrets.EC2_USERNAME }}/appraisehub
+
+            # 2. Extract the fresh code and remove the archive
+            tar -xzf deploy.tar.gz
+            rm deploy.tar.gz
+
+            # 3. Build the new image and recreate containers without downtime
+            # The -d flag runs it in the background
+            docker compose up --build -d
+
+            # 4. Clean up dangling images from previous builds to prevent disk exhaustion
+            docker image prune -f
