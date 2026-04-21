@@ -13,8 +13,6 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-
-
       - name: Copy backend directory to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
