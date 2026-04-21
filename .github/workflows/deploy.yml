@@ -3,7 +3,7 @@ name: Production Deployment (Docker)
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   deploy-backend-ec2:
