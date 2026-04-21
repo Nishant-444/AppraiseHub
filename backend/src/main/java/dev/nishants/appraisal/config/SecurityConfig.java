@@ -75,25 +75,17 @@ public class SecurityConfig {
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration config = new CorsConfiguration();
-
-    // 1. EXACT matches only. No wildcards.
+    // Exact matches go here
     config.setAllowedOrigins(List.of(
         "http://localhost:5173",
         "http://localhost:3000",
         "https://appraise-hub.vercel.app"));
+    // Wildcards go here
+    config.setAllowedOriginPatterns(List.of("https://*.vercel.app"));
 
-    // 2. Allow all standard methods
     config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-
-    // 3. Allow all incoming headers
     config.setAllowedHeaders(List.of("*"));
-
-    // 4. Expose the Authorization header to the frontend
-    config.setExposedHeaders(List.of("Authorization"));
-
-    // 5. Allow credentials (cookies/auth headers)
     config.setAllowCredentials(true);
-
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", config);
     return source;
