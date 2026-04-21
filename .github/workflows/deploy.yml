@@ -13,9 +13,10 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Compress project files for transfer
-        # wee tar the files to speed up the SCP transfer and avoid moving the heavy .git folder
-        run: tar -czf deploy.tar.gz src pom.xml .mvn mvnw Dockerfile docker-compose.yml
+      - name: Compress backend project files for transfer
+        run: |
+          cd backend
+          tar -czf ../deploy.tar.gz src pom.xml .mvn mvnw Dockerfile docker-compose.yml
 
       - name: Copy archive to EC2
         uses: appleboy/scp-action@v0.1.7
