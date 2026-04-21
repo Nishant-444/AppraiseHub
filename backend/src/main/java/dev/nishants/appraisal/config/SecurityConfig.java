@@ -78,7 +78,8 @@ public class SecurityConfig {
     // Exact matches go here
     config.setAllowedOrigins(List.of(
         "http://localhost:5173",
-        "http://localhost:3000"));
+        "http://localhost:3000",
+        "https://appraisal-frontend.vercel.app"));
     // Wildcards go here
     config.setAllowedOriginPatterns(List.of("https://*.vercel.app"));
 

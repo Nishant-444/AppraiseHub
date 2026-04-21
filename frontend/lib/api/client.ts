@@ -22,7 +22,8 @@ import type {
 	TeamReport,
 } from "./types";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
+const API_BASE =
+	process.env.NEXT_PUBLIC_API_URL || "https://appraisehub-api.duckdns.org/api";
 
 class ApiClient {
 	private token: string | null = null;
