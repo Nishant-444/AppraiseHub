@@ -419,8 +419,11 @@ public class AppraisalServiceImpl implements AppraisalService {
   }
 
   private void requireManager(Appraisal appraisal, Long managerId) {
-    if (!appraisal.getManager().getId().equals(managerId))
+    // Allow if the manager is the direct manager or the employee is the manager
+    // (self-appraisal for managers)
+    if (!appraisal.getManager().getId().equals(managerId) && !appraisal.getEmployee().getId().equals(managerId)) {
       throw new UnauthorizedAccessException("Access denied: you are not the manager for this appraisal");
+    }
   }
 
   private void applySelfAssessmentFields(Appraisal appraisal, SelfAssessmentRequest request) {

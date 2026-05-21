@@ -221,6 +221,61 @@ git push origin feature/feature-name
 
 ---
 
+## Spring Boot Flow
+
+This section outlines the typical Spring Boot request & runtime flow used by the backend:
+
+- **Client → Controller:** HTTP requests from the UI or API clients are received by `@RestController` endpoints.
+- **Controller → Service:** Controllers delegate business logic to `@Service` components.
+- **Service → Repository:** Services use Spring Data JPA repositories (`@Repository`) to read/write domain entities.
+- **Persistence → DB:** Hibernate (JPA) translates entity operations into SQL executed against MySQL.
+- **Security & Filters:** Requests pass through Spring Security filter chain (authentication/authorization) and any custom `OncePerRequestFilter` implementations (e.g., JWT parsing).
+- **DTOs & Mapping:** Controllers expose DTOs; entity ↔ DTO mapping isolates persistence concerns from API contracts.
+- **Exception Handling:** Global exceptions are handled by `@ControllerAdvice` / `@RestControllerAdvice` to standardize error responses.
+- **Profiles & Config:** Configuration lives under `src/main/resources` and uses profiles (`application.properties`, `application-prod.properties`, `application-test.properties`). Activate profiles with `--spring.profiles.active=` or via environment variables.
+- **Build & Run:** Use Maven (or the included Maven Wrapper) to build and run. Packaging produces an executable JAR which can be run with `java -jar` or executed in Docker.
+
+Common commands:
+
+```bash
+# Windows (dev)
+cd backend
+mvnw.cmd spring-boot:run
+
+# Package
+cd backend
+./mvnw package    # or mvnw.cmd package on Windows
+
+# Run packaged jar
+java -jar backend/target/appraisal-0.0.1-SNAPSHOT.jar
+```
+
+---
+
+## Current Project Flow
+
+This project (`AppraiseHub`) follows the flow below when developing, building, and deploying:
+
+- **Local dev:**
+  - Start the backend in dev mode using the Maven wrapper: `backend/mvnw.cmd spring-boot:run` (Windows) or `./backend/mvnw spring-boot:run` (macOS/Linux).
+  - Start the frontend with Next.js: `cd frontend && npm install && npm run dev`.
+- **Configuration:**
+  - Backend properties: [backend/src/main/resources/application.properties](backend/src/main/resources/application.properties) and profile-specific files (e.g. `application-prod.properties`).
+  - Secrets and environment-specific values are provided via environment variables when running in containers or CI.
+- **Build & Package:**
+  - Backend: `./mvnw package` produces the application artifact at `backend/target/` (e.g. `appraisal-0.0.1-SNAPSHOT.jar`).
+  - Frontend: `npm run build` in `frontend` to produce the optimized Next.js output.
+- **Containerization & Deployment:**
+  - Backend Dockerfile and compose files live in the `backend/` folder. Use `docker build -t appraisehub-backend:latest -f backend/Dockerfile backend` to build, and `docker-compose -f backend/docker-compose.yml up -d` to bring services up locally.
+  - The system composes the frontend and backend (and DB) in local or production compose files as needed.
+- **Runtime interactions:**
+  - The frontend communicates with the backend via the REST API exposed at `http://localhost:8080` during development (CORS configured on the backend).
+  - Authentication is handled via JWT tokens issued by the backend and sent in the `Authorization` header by the frontend.
+
+If you'd like, I can also add a minimal diagram or sequence example showing a sample API call through the stack.
+
+---
+
 ## License
 
 ISC [License](./LICENSE)

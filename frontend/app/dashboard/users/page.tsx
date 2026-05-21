@@ -166,6 +166,11 @@ export default function UsersPage() {
 	}, [role]);
 
 	const handleToggleUserStatus = async (user: User, nextActive: boolean) => {
+		if (currentUser?.id === user.id && !nextActive) {
+			toast.error("You cannot deactivate your own account");
+			return;
+		}
+
 		setTogglingUserId(user.id);
 		try {
 			const res = await apiClient.updateUser(user.id, { isActive: nextActive });
@@ -459,7 +464,10 @@ export default function UsersPage() {
 													onCheckedChange={(checked) =>
 														handleToggleUserStatus(user, checked)
 													}
-													disabled={togglingUserId === user.id}
+													disabled={
+														togglingUserId === user.id ||
+														currentUser?.id === user.id
+													}
 												/>
 											</div>
 										</TableCell>

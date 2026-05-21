@@ -144,8 +144,12 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional
   public UserResponse updateUser(Long userId, UpdateUserRequest request) {
-    authorizationService.requireHr();
+    User currentUser = authorizationService.requireHr();
     User user = findById(userId);
+
+    if (request.getIsActive() != null && !request.getIsActive() && currentUser.getId().equals(userId)) {
+      throw new UnauthorizedAccessException("You cannot deactivate your own account");
+    }
 
     if (request.getFullName() != null)
       user.setFullName(request.getFullName());

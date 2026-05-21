@@ -145,48 +145,52 @@ export default function AppraisalsPage() {
 
 		setIsCreating(true);
 		try {
-			const res =
-				createScope === "user"
-					? await apiClient.createAppraisal({
-							cycleName,
-							cycleStartDate,
-							cycleEndDate,
-							employeeId: parseInt(selectedEmployeeId),
-							managerId: parseInt(selectedManagerId),
-						})
-					: await apiClient.createBulkCycle({
-							cycleName,
-							cycleStartDate,
-							cycleEndDate,
-							departmentId:
-								createScope === "department" && cycleDepId !== "all"
-									? parseInt(cycleDepId)
-									: null,
-						});
-			if (res.success) {
-				if (createScope === "user") {
-					toast.success("Appraisal created");
-				} else {
-					const created = res.data?.created ?? 0;
-					const skipped =
-						(res.data?.skippedAlreadyExists ?? 0) +
-						(res.data?.skippedNoManager ?? 0);
-					toast.success(
-						`Created ${created} appraisals${skipped ? ` (${skipped} skipped)` : ""}`,
-					);
+			if (createScope === "user") {
+				const res = await apiClient.createAppraisal({
+					cycleName,
+					cycleStartDate,
+					cycleEndDate,
+					employeeId: parseInt(selectedEmployeeId),
+					managerId: parseInt(selectedManagerId),
+				});
+				if (!res.success) {
+					toast.error(res.message || "Failed to create cycle");
+					return;
 				}
-				setIsCreateOpen(false);
-				setCycleName("");
-				setCycleStartDate("");
-				setCycleEndDate("");
-				setCycleDepId("all");
-				setCreateScope("all");
-				setSelectedEmployeeId("");
-				setSelectedManagerId("");
-				loadAppraisals();
+				toast.success("Appraisal created");
 			} else {
-				toast.error(res.message || "Failed to create cycle");
+				const res = await apiClient.createBulkCycle({
+					cycleName,
+					cycleStartDate,
+					cycleEndDate,
+					departmentId:
+						createScope === "department" && cycleDepId !== "all"
+							? parseInt(cycleDepId)
+							: null,
+				});
+				if (!res.success) {
+					toast.error(res.message || "Failed to create cycle");
+					return;
+				}
+
+				const created = res.data?.created ?? 0;
+				const skipped =
+					(res.data?.skippedAlreadyExists ?? 0) +
+					(res.data?.skippedNoManager ?? 0);
+				toast.success(
+					`Created ${created} appraisals${skipped ? ` (${skipped} skipped)` : ""}`,
+				);
 			}
+
+			setIsCreateOpen(false);
+			setCycleName("");
+			setCycleStartDate("");
+			setCycleEndDate("");
+			setCycleDepId("all");
+			setCreateScope("all");
+			setSelectedEmployeeId("");
+			setSelectedManagerId("");
+			loadAppraisals();
 		} catch {
 			toast.error("Failed to create cycle");
 		}
