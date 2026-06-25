@@ -54,7 +54,7 @@ public class Goal {
 
   public enum Status {
     NOT_STARTED,
-    IN_PROGESS,
+    IN_PROGRESS,
     COMPLETED,
     CANCELLED;
 
