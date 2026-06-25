@@ -6,9 +6,9 @@ import lombok.Getter;
 @Getter
 @Builder
 public class DepartmentReportResponse {
-    private String departmentName;
-    private long totalEmployees;
-    private long completed;
-    private long pending;
-    private Double averageRating;
+  private String departmentName;
+  private long totalEmployees;
+  private long completed;
+  private long pending;
+  private Double averageRating;
 }

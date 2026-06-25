@@ -18,6 +18,6 @@ public class CurrentUserService {
   public User getCurrentUser() {
     String email = SecurityContextHolder.getContext().getAuthentication().getName();
     return userRepository.findByEmailWithDetails(email)
-        .orElseThrow(() -> new UnauthorizedAccessException("Access denied: user not found"));
+            .orElseThrow(() -> new UnauthorizedAccessException("Access denied: user not found"));
   }
 }

@@ -33,41 +33,41 @@ public class SecurityConfig {
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
-        .csrf(AbstractHttpConfigurer::disable)
-        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-        .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .authorizeHttpRequests(auth -> auth
-            // Public — login only
-            .requestMatchers("/api/auth/**").permitAll()
+            .csrf(AbstractHttpConfigurer::disable)
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth
+                    // Public — login only
+                    .requestMatchers("/api/auth/**").permitAll()
 
-            // HR only
-            .requestMatchers(HttpMethod.POST, "/api/users").hasRole("HR")
-            .requestMatchers(HttpMethod.PUT, "/api/users/**").hasRole("HR")
-            .requestMatchers(HttpMethod.DELETE, "/api/users/**").hasRole("HR")
-            .requestMatchers(HttpMethod.POST, "/api/departments/**").hasRole("HR")
-            .requestMatchers(HttpMethod.PUT, "/api/departments/**").hasRole("HR")
-            .requestMatchers(HttpMethod.DELETE, "/api/departments/**").hasRole("HR")
-            .requestMatchers(HttpMethod.POST, "/api/appraisals").hasRole("HR")
-            .requestMatchers(HttpMethod.POST, "/api/appraisals/cycle/**").hasRole("HR")
-            .requestMatchers(HttpMethod.PATCH, "/api/appraisals/*/approve").hasRole("HR")
-            .requestMatchers("/api/reports/cycle/**").hasRole("HR")
+                    // HR only
+                    .requestMatchers(HttpMethod.POST, "/api/users").hasRole("HR")
+                    .requestMatchers(HttpMethod.PUT, "/api/users/**").hasRole("HR")
+                    .requestMatchers(HttpMethod.DELETE, "/api/users/**").hasRole("HR")
+                    .requestMatchers(HttpMethod.POST, "/api/departments/**").hasRole("HR")
+                    .requestMatchers(HttpMethod.PUT, "/api/departments/**").hasRole("HR")
+                    .requestMatchers(HttpMethod.DELETE, "/api/departments/**").hasRole("HR")
+                    .requestMatchers(HttpMethod.POST, "/api/appraisals").hasRole("HR")
+                    .requestMatchers(HttpMethod.POST, "/api/appraisals/cycle/**").hasRole("HR")
+                    .requestMatchers(HttpMethod.PATCH, "/api/appraisals/*/approve").hasRole("HR")
+                    .requestMatchers("/api/reports/cycle/**").hasRole("HR")
 
-            // Manager only
-            .requestMatchers(HttpMethod.POST, "/api/goals").hasRole("MANAGER")
-            .requestMatchers(HttpMethod.PUT, "/api/goals/**").hasRole("MANAGER")
-            .requestMatchers(HttpMethod.DELETE, "/api/goals/**").hasRole("MANAGER")
-            .requestMatchers(HttpMethod.PUT, "/api/appraisals/*/manager-review/**").hasRole("MANAGER")
-            .requestMatchers("/api/reports/manager/**").hasAnyRole("MANAGER", "HR")
+                    // Manager only
+                    .requestMatchers(HttpMethod.POST, "/api/goals").hasRole("MANAGER")
+                    .requestMatchers(HttpMethod.PUT, "/api/goals/**").hasRole("MANAGER")
+                    .requestMatchers(HttpMethod.DELETE, "/api/goals/**").hasRole("MANAGER")
+                    .requestMatchers(HttpMethod.PUT, "/api/appraisals/*/manager-review/**").hasRole("MANAGER")
+                    .requestMatchers("/api/reports/manager/**").hasAnyRole("MANAGER", "HR")
 
-            // Employee + Manager can submit self-assessment (managers can be appraised too)
-            .requestMatchers(HttpMethod.PUT, "/api/appraisals/*/self-assessment/**").hasAnyRole("EMPLOYEE", "MANAGER")
-            .requestMatchers(HttpMethod.PATCH, "/api/appraisals/*/acknowledge").hasAnyRole("EMPLOYEE", "MANAGER")
-            .requestMatchers(HttpMethod.PATCH, "/api/goals/*/progress").hasRole("EMPLOYEE")
-            .requestMatchers("/api/reports/employee/**").hasAnyRole("EMPLOYEE", "HR")
+                    // Employee + Manager can submit self-assessment (managers can be appraised too)
+                    .requestMatchers(HttpMethod.PUT, "/api/appraisals/*/self-assessment/**").hasAnyRole("EMPLOYEE", "MANAGER")
+                    .requestMatchers(HttpMethod.PATCH, "/api/appraisals/*/acknowledge").hasAnyRole("EMPLOYEE", "MANAGER")
+                    .requestMatchers(HttpMethod.PATCH, "/api/goals/*/progress").hasRole("EMPLOYEE")
+                    .requestMatchers("/api/reports/employee/**").hasAnyRole("EMPLOYEE", "HR")
 
-            // Authenticated — any role
-            .anyRequest().authenticated())
-        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                    // Authenticated — any role
+                    .anyRequest().authenticated())
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
   }
@@ -77,9 +77,9 @@ public class SecurityConfig {
     CorsConfiguration config = new CorsConfiguration();
     // Exact matches go here
     config.setAllowedOrigins(List.of(
-        "http://localhost:5173",
-        "http://localhost:3000",
-        "https://appraise-hub.vercel.app"));
+            "http://localhost:5173",
+            "http://localhost:3000",
+            "https://appraise-hub.vercel.app"));
     // Wildcards go here
     config.setAllowedOriginPatterns(List.of("https://*.vercel.app"));
 

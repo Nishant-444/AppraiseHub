@@ -25,13 +25,13 @@ public class GoalController {
   // POST /api/goals?managerId=1
   @PostMapping
   public ResponseEntity<ApiResponse<GoalResponse>> createGoal(
-      @RequestBody GoalRequest request,
-      @RequestParam Long managerId) {
+          @RequestBody GoalRequest request,
+          @RequestParam Long managerId) {
 
     GoalResponse response = goalService.createGoal(request, managerId);
     return ResponseEntity
-        .status(HttpStatus.CREATED)
-        .body(ApiResponse.success("Goal created successfully", response));
+            .status(HttpStatus.CREATED)
+            .body(ApiResponse.success("Goal created successfully", response));
   }
 
   // GET /api/goals/{id}
@@ -43,23 +43,23 @@ public class GoalController {
   // GET /api/goals/appraisal/{appraisalId}
   @GetMapping("/appraisal/{appraisalId}")
   public ResponseEntity<ApiResponse<List<GoalResponse>>> getGoalsByAppraisal(
-      @PathVariable Long appraisalId) {
+          @PathVariable Long appraisalId) {
     return ResponseEntity.ok(ApiResponse.success(goalService.getGoalsByAppraisal(appraisalId)));
   }
 
   // GET /api/goals/employee/{employeeId}
   @GetMapping("/employee/{employeeId}")
   public ResponseEntity<ApiResponse<List<GoalResponse>>> getGoalsByEmployee(
-      @PathVariable Long employeeId) {
+          @PathVariable Long employeeId) {
     return ResponseEntity.ok(ApiResponse.success(goalService.getGoalsByEmployee(employeeId)));
   }
 
   // PUT /api/goals/{id}?managerId=1
   @PutMapping("/{id}")
   public ResponseEntity<ApiResponse<GoalResponse>> updateGoal(
-      @PathVariable Long id,
-      @RequestBody GoalRequest request,
-      @RequestParam Long managerId) {
+          @PathVariable Long id,
+          @RequestBody GoalRequest request,
+          @RequestParam Long managerId) {
 
     GoalResponse response = goalService.updateGoal(id, request, managerId);
     return ResponseEntity.ok(ApiResponse.success("Goal updated successfully", response));
@@ -68,9 +68,9 @@ public class GoalController {
   // PATCH /api/goals/{id}/progress?employeeId=1
   @PatchMapping("/{id}/progress")
   public ResponseEntity<ApiResponse<GoalResponse>> updateProgress(
-      @PathVariable Long id,
-      @Valid @RequestBody GoalProgressRequest request,
-      @RequestParam Long employeeId) {
+          @PathVariable Long id,
+          @Valid @RequestBody GoalProgressRequest request,
+          @RequestParam Long employeeId) {
 
     GoalResponse response = goalService.updateProgress(id, request, employeeId);
     return ResponseEntity.ok(ApiResponse.success("Goal progress updated", response));
@@ -79,8 +79,8 @@ public class GoalController {
   // DELETE /api/goals/{id}?managerId=1
   @DeleteMapping("/{id}")
   public ResponseEntity<ApiResponse<Void>> deleteGoal(
-      @PathVariable Long id,
-      @RequestParam Long managerId) {
+          @PathVariable Long id,
+          @RequestParam Long managerId) {
 
     goalService.deleteGoal(id, managerId);
     return ResponseEntity.ok(ApiResponse.success("Goal deleted successfully", null));

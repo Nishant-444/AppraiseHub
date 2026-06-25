@@ -37,24 +37,24 @@ public class GoalServiceImpl implements GoalService {
   @Transactional
   public GoalResponse createGoal(GoalRequest request, Long managerId) {
     authorizationService.requireManagerSelf(
-        managerId,
-        "Access denied: only the manager can create goals");
+            managerId,
+            "Access denied: only the manager can create goals");
     validateCreateGoalRequest(request);
     Appraisal appraisal = appraisalRepository.findByIdWithDetails(request.getAppraisalId())
-        .orElseThrow(() -> new ResourceNotFoundException("Appraisal", request.getAppraisalId()));
+            .orElseThrow(() -> new ResourceNotFoundException("Appraisal", request.getAppraisalId()));
 
     if (!appraisal.getManager().getId().equals(managerId)) {
       throw new UnauthorizedAccessException(
-          "Access denied: you are not the manager for this appraisal");
+              "Access denied: you are not the manager for this appraisal");
     }
 
     Goal goal = Goal.builder()
-        .appraisal(appraisal)
-        .employee(appraisal.getEmployee())
-        .title(request.getTitle())
-        .description(request.getDescription())
-        .dueDate(request.getDueDate())
-        .build();
+            .appraisal(appraisal)
+            .employee(appraisal.getEmployee())
+            .title(request.getTitle())
+            .description(request.getDescription())
+            .dueDate(request.getDueDate())
+            .build();
 
     goalRepository.save(goal);
     return GoalMapper.toResponse(goal);
@@ -75,15 +75,15 @@ public class GoalServiceImpl implements GoalService {
   @Transactional(readOnly = true)
   public List<GoalResponse> getGoalsByAppraisal(Long appraisalId) {
     Appraisal appraisal = appraisalRepository.findByIdWithDetails(appraisalId)
-        .orElseThrow(() -> new ResourceNotFoundException("Appraisal", appraisalId));
+            .orElseThrow(() -> new ResourceNotFoundException("Appraisal", appraisalId));
     User currentUser = authorizationService.currentUser();
     if (!canViewAppraisalGoals(currentUser, appraisal)) {
       throw new UnauthorizedAccessException("Access denied: you cannot view these goals");
     }
     return goalRepository.findByAppraisalId(appraisalId)
-        .stream()
-        .map(GoalMapper::toResponse)
-        .collect(Collectors.toList());
+            .stream()
+            .map(GoalMapper::toResponse)
+            .collect(Collectors.toList());
   }
 
   @Override
@@ -94,22 +94,22 @@ public class GoalServiceImpl implements GoalService {
       throw new UnauthorizedAccessException("Access denied: you cannot view these goals");
     }
     return goalRepository.findByEmployeeId(employeeId)
-        .stream()
-        .map(GoalMapper::toResponse)
-        .collect(Collectors.toList());
+            .stream()
+            .map(GoalMapper::toResponse)
+            .collect(Collectors.toList());
   }
 
   @Override
   @Transactional
   public GoalResponse updateGoal(Long goalId, GoalRequest request, Long managerId) {
     authorizationService.requireManagerSelf(
-        managerId,
-        "Access denied: only the manager can update this goal");
+            managerId,
+            "Access denied: only the manager can update this goal");
     Goal goal = findById(goalId);
 
     if (!goal.getAppraisal().getManager().getId().equals(managerId)) {
       throw new UnauthorizedAccessException(
-          "Access denied: only the manager can update this goal");
+              "Access denied: only the manager can update this goal");
     }
 
     if (request.getTitle() != null)
@@ -142,13 +142,13 @@ public class GoalServiceImpl implements GoalService {
   @Transactional
   public void deleteGoal(Long goalId, Long managerId) {
     authorizationService.requireManagerSelf(
-        managerId,
-        "Access denied: only the manager can delete this goal");
+            managerId,
+            "Access denied: only the manager can delete this goal");
     Goal goal = findById(goalId);
 
     if (!goal.getAppraisal().getManager().getId().equals(managerId)) {
       throw new UnauthorizedAccessException(
-          "Access denied: only the manager can delete this goal");
+              "Access denied: only the manager can delete this goal");
     }
 
     goalRepository.delete(goal);
@@ -156,7 +156,7 @@ public class GoalServiceImpl implements GoalService {
 
   private Goal findById(Long id) {
     return goalRepository.findByIdWithDetails(id)
-        .orElseThrow(() -> new ResourceNotFoundException("Goal", id));
+            .orElseThrow(() -> new ResourceNotFoundException("Goal", id));
   }
 
   private boolean canViewGoal(User currentUser, Goal goal) {
@@ -181,9 +181,9 @@ public class GoalServiceImpl implements GoalService {
     if (currentUser.getId().equals(employeeId))
       return true;
     return currentUser.getRole() == Role.MANAGER
-        && userRepository.findById(employeeId)
+            && userRepository.findById(employeeId)
             .map(emp -> emp.getManager() != null
-                && emp.getManager().getId().equals(currentUser.getId()))
+                    && emp.getManager().getId().equals(currentUser.getId()))
             .orElse(false);
   }
 

@@ -11,10 +11,10 @@ import dev.nishants.appraisal.entity.Notification.Type;
 @Setter
 public class NotificationResponse {
 
-    private Long id;
-    private String title;
-    private String message;
-    private Type type;
-    private boolean isRead;
-    private LocalDateTime createdAt;
+  private Long id;
+  private String title;
+  private String message;
+  private Type type;
+  private boolean isRead;
+  private LocalDateTime createdAt;
 }

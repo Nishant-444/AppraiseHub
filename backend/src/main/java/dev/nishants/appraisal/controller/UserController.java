@@ -24,12 +24,12 @@ public class UserController {
   // POST /api/users
   @PostMapping
   public ResponseEntity<ApiResponse<UserResponse>> createUser(
-      @Valid @RequestBody CreateUserRequest request) {
+          @Valid @RequestBody CreateUserRequest request) {
 
     UserResponse response = userService.createUser(request);
     return ResponseEntity
-        .status(HttpStatus.CREATED)
-        .body(ApiResponse.success("User created successfully", response));
+            .status(HttpStatus.CREATED)
+            .body(ApiResponse.success("User created successfully", response));
   }
 
   // GET /api/users
@@ -59,15 +59,15 @@ public class UserController {
   // GET /api/users/manager/{managerId}/team
   @GetMapping("/manager/{managerId}/team")
   public ResponseEntity<ApiResponse<List<UserResponse>>> getTeam(
-      @PathVariable Long managerId) {
+          @PathVariable Long managerId) {
     return ResponseEntity.ok(ApiResponse.success(userService.getTeamByManager(managerId)));
   }
 
   // PUT /api/users/{id}
   @PutMapping("/{id}")
   public ResponseEntity<ApiResponse<UserResponse>> updateUser(
-      @PathVariable Long id,
-      @RequestBody UpdateUserRequest request) {
+          @PathVariable Long id,
+          @RequestBody UpdateUserRequest request) {
 
     UserResponse response = userService.updateUser(id, request);
     return ResponseEntity.ok(ApiResponse.success("User updated successfully", response));

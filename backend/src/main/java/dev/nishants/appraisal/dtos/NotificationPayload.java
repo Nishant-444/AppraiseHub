@@ -7,11 +7,23 @@ public class NotificationPayload {
   private final String endDate;
 
   public NotificationPayload(String cycleName, String employeeName,
-      String startDate, String endDate) {
+                             String startDate, String endDate) {
     this.cycleName = cycleName;
     this.employeeName = employeeName;
     this.startDate = startDate;
     this.endDate = endDate;
+  }
+
+  public static NotificationPayload forCycle(String cycleName, String startDate, String endDate) {
+    return new NotificationPayload(cycleName, null, startDate, endDate);
+  }
+
+  public static NotificationPayload forCycleName(String cycleName) {
+    return new NotificationPayload(cycleName, null, null, null);
+  }
+
+  public static NotificationPayload forEmployeeCycle(String employeeName, String cycleName) {
+    return new NotificationPayload(cycleName, employeeName, null, null);
   }
 
   public String getCycleName() {
@@ -28,17 +40,5 @@ public class NotificationPayload {
 
   public String getEndDate() {
     return endDate;
-  }
-
-  public static NotificationPayload forCycle(String cycleName, String startDate, String endDate) {
-    return new NotificationPayload(cycleName, null, startDate, endDate);
-  }
-
-  public static NotificationPayload forCycleName(String cycleName) {
-    return new NotificationPayload(cycleName, null, null, null);
-  }
-
-  public static NotificationPayload forEmployeeCycle(String employeeName, String cycleName) {
-    return new NotificationPayload(cycleName, employeeName, null, null);
   }
 }

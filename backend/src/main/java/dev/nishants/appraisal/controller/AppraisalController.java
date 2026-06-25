@@ -36,29 +36,29 @@ public class AppraisalController {
   // POST /api/appraisals
   @PostMapping
   public ResponseEntity<ApiResponse<AppraisalResponse>> createAppraisal(
-      @Valid @RequestBody CreateAppraisalRequest request) {
+          @Valid @RequestBody CreateAppraisalRequest request) {
 
     AppraisalResponse response = appraisalService.createAppraisal(request);
     return ResponseEntity.status(HttpStatus.CREATED)
-        .body(ApiResponse.success("Appraisal created successfully", response));
+            .body(ApiResponse.success("Appraisal created successfully", response));
   }
 
   // HR: bulk create for all active employees
   // POST /api/appraisals/cycle/bulk-create
   @PostMapping("/cycle/bulk-create")
   public ResponseEntity<ApiResponse<BulkCycleResponse>> createBulkCycle(
-      @Valid @RequestBody BulkCycleRequest request) {
+          @Valid @RequestBody BulkCycleRequest request) {
 
     BulkCycleResponse response = appraisalService.createBulkCycle(request);
     return ResponseEntity.status(HttpStatus.CREATED)
-        .body(ApiResponse.success("Bulk cycle created", response));
+            .body(ApiResponse.success("Bulk cycle created", response));
   }
 
   // Read
   // GET /api/appraisals/my?employeeId=1
   @GetMapping("/my")
   public ResponseEntity<ApiResponse<List<AppraisalResponse>>> getMyAppraisals(
-      @RequestParam Long employeeId) {
+          @RequestParam Long employeeId) {
 
     return ResponseEntity.ok(ApiResponse.success(appraisalService.getMyAppraisals(employeeId)));
   }
@@ -66,7 +66,7 @@ public class AppraisalController {
   // GET /api/appraisals/team?managerId=1
   @GetMapping("/team")
   public ResponseEntity<ApiResponse<List<AppraisalResponse>>> getTeamAppraisals(
-      @RequestParam Long managerId) {
+          @RequestParam Long managerId) {
 
     return ResponseEntity.ok(ApiResponse.success(appraisalService.getTeamAppraisals(managerId)));
   }
@@ -74,8 +74,8 @@ public class AppraisalController {
   // GET /api/appraisals/{id}?requesterId=1
   @GetMapping("/{id}")
   public ResponseEntity<ApiResponse<AppraisalResponse>> getAppraisalById(
-      @PathVariable Long id,
-      @RequestParam Long requesterId) {
+          @PathVariable Long id,
+          @RequestParam Long requesterId) {
 
     return ResponseEntity.ok(ApiResponse.success(appraisalService.getAppraisalById(id, requesterId)));
   }
@@ -84,9 +84,9 @@ public class AppraisalController {
   // PUT /api/appraisals/{id}/self-assessment/draft?employeeId=1
   @PutMapping("/{id}/self-assessment/draft")
   public ResponseEntity<ApiResponse<AppraisalResponse>> saveSelfAssessmentDraft(
-      @PathVariable Long id,
-      @Valid @RequestBody SelfAssessmentRequest request,
-      @RequestParam Long employeeId) {
+          @PathVariable Long id,
+          @Valid @RequestBody SelfAssessmentRequest request,
+          @RequestParam Long employeeId) {
 
     AppraisalResponse response = appraisalService.saveSelfAssessmentDraft(id, request, employeeId);
     return ResponseEntity.ok(ApiResponse.success("Draft saved", response));
@@ -96,9 +96,9 @@ public class AppraisalController {
   // PUT /api/appraisals/{id}/self-assessment/submit?employeeId=1
   @PutMapping("/{id}/self-assessment/submit")
   public ResponseEntity<ApiResponse<AppraisalResponse>> submitSelfAssessment(
-      @PathVariable Long id,
-      @Valid @RequestBody SelfAssessmentRequest request,
-      @RequestParam Long employeeId) {
+          @PathVariable Long id,
+          @Valid @RequestBody SelfAssessmentRequest request,
+          @RequestParam Long employeeId) {
 
     AppraisalResponse response = appraisalService.submitSelfAssessment(id, request, employeeId);
     return ResponseEntity.ok(ApiResponse.success("Self-assessment submitted", response));
@@ -108,9 +108,9 @@ public class AppraisalController {
   // PUT /api/appraisals/{id}/manager-review/draft?managerId=1
   @PutMapping("/{id}/manager-review/draft")
   public ResponseEntity<ApiResponse<AppraisalResponse>> saveManagerReviewDraft(
-      @PathVariable Long id,
-      @Valid @RequestBody ManagerReviewRequest request,
-      @RequestParam Long managerId) {
+          @PathVariable Long id,
+          @Valid @RequestBody ManagerReviewRequest request,
+          @RequestParam Long managerId) {
 
     AppraisalResponse response = appraisalService.saveManagerReviewDraft(id, request, managerId);
     return ResponseEntity.ok(ApiResponse.success("Review draft saved", response));
@@ -120,9 +120,9 @@ public class AppraisalController {
   // PUT /api/appraisals/{id}/manager-review/submit?managerId=1
   @PutMapping("/{id}/manager-review/submit")
   public ResponseEntity<ApiResponse<AppraisalResponse>> submitManagerReview(
-      @PathVariable Long id,
-      @Valid @RequestBody ManagerReviewRequest request,
-      @RequestParam Long managerId) {
+          @PathVariable Long id,
+          @Valid @RequestBody ManagerReviewRequest request,
+          @RequestParam Long managerId) {
 
     AppraisalResponse response = appraisalService.submitManagerReview(id, request, managerId);
     return ResponseEntity.ok(ApiResponse.success("Manager review submitted", response));
@@ -132,7 +132,7 @@ public class AppraisalController {
   // PATCH /api/appraisals/{id}/approve
   @PatchMapping("/{id}/approve")
   public ResponseEntity<ApiResponse<AppraisalResponse>> approveAppraisal(
-      @PathVariable Long id) {
+          @PathVariable Long id) {
 
     AppraisalResponse response = appraisalService.approveAppraisal(id);
     return ResponseEntity.ok(ApiResponse.success("Appraisal approved", response));
@@ -142,8 +142,8 @@ public class AppraisalController {
   // PATCH /api/appraisals/{id}/acknowledge?employeeId=1
   @PatchMapping("/{id}/acknowledge")
   public ResponseEntity<ApiResponse<AppraisalResponse>> acknowledgeAppraisal(
-      @PathVariable Long id,
-      @RequestParam Long employeeId) {
+          @PathVariable Long id,
+          @RequestParam Long employeeId) {
 
     AppraisalResponse response = appraisalService.acknowledgeAppraisal(id, employeeId);
     return ResponseEntity.ok(ApiResponse.success("Appraisal acknowledged", response));

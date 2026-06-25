@@ -11,12 +11,12 @@ import dev.nishants.appraisal.entity.Goal.Status;
 @Setter
 public class GoalResponse {
 
-    private Long id;
-    private Long appraisalId;
-    private Long employeeId;
-    private String employeeName;
-    private String title;
-    private String description;
-    private Status status;
-    private LocalDate dueDate;
+  private Long id;
+  private Long appraisalId;
+  private Long employeeId;
+  private String employeeName;
+  private String title;
+  private String description;
+  private Status status;
+  private LocalDate dueDate;
 }

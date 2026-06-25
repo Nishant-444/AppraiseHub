@@ -11,15 +11,15 @@ import java.time.LocalDate;
 @Setter
 public class BulkCycleRequest {
 
-    @NotBlank(message = "Cycle name is required")
-    private String cycleName;
+  @NotBlank(message = "Cycle name is required")
+  private String cycleName;
 
-    @NotNull(message = "Cycle start date is required")
-    private LocalDate cycleStartDate;
+  @NotNull(message = "Cycle start date is required")
+  private LocalDate cycleStartDate;
 
-    @NotNull(message = "Cycle end date is required")
-    private LocalDate cycleEndDate;
+  @NotNull(message = "Cycle end date is required")
+  private LocalDate cycleEndDate;
 
-    // Optional — if set, only create for employees in this department
-    private Long departmentId;
+  // Optional — if set, only create for employees in this department
+  private Long departmentId;
 }

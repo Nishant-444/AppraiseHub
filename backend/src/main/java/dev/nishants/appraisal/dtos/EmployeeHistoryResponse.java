@@ -11,19 +11,19 @@ import dev.nishants.appraisal.entity.enums.AppraisalStatus;
 @Getter
 @Builder
 public class EmployeeHistoryResponse {
-    private Long employeeId;
-    private String employeeName;
-    private List<CycleRecord> cycles;
+  private Long employeeId;
+  private String employeeName;
+  private List<CycleRecord> cycles;
 
-    @Getter
-    @Builder
-    public static class CycleRecord {
-        private String cycleName;
-        private LocalDate cycleStartDate;
-        private LocalDate cycleEndDate;
-        private Integer selfRating;
-        private Integer managerRating;
-        private AppraisalStatus status;
-        private String managerName;
-    }
+  @Getter
+  @Builder
+  public static class CycleRecord {
+    private String cycleName;
+    private LocalDate cycleStartDate;
+    private LocalDate cycleEndDate;
+    private Integer selfRating;
+    private Integer managerRating;
+    private AppraisalStatus status;
+    private String managerName;
+  }
 }

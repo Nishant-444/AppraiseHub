@@ -19,32 +19,32 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(ResourceNotFoundException.class)
   public ResponseEntity<ApiResponse<Void>> handleNotFound(ResourceNotFoundException ex) {
     return ResponseEntity
-        .status(HttpStatus.NOT_FOUND)
-        .body(ApiResponse.error(ex.getMessage()));
+            .status(HttpStatus.NOT_FOUND)
+            .body(ApiResponse.error(ex.getMessage()));
   }
 
   // 403 — wrong user trying to access something
   @ExceptionHandler(UnauthorizedAccessException.class)
   public ResponseEntity<ApiResponse<Void>> handleUnauthorized(UnauthorizedAccessException ex) {
     return ResponseEntity
-        .status(HttpStatus.FORBIDDEN)
-        .body(ApiResponse.error(ex.getMessage()));
+            .status(HttpStatus.FORBIDDEN)
+            .body(ApiResponse.error(ex.getMessage()));
   }
 
   // 409 — duplicate appraisal, duplicate goal, etc.
   @ExceptionHandler(DuplicateResourceException.class)
   public ResponseEntity<ApiResponse<Void>> handleDuplicate(DuplicateResourceException ex) {
     return ResponseEntity
-        .status(HttpStatus.CONFLICT)
-        .body(ApiResponse.error(ex.getMessage()));
+            .status(HttpStatus.CONFLICT)
+            .body(ApiResponse.error(ex.getMessage()));
   }
 
   // 400 — wrong status transition (e.g. acknowledge before approve)
   @ExceptionHandler(InvalidStatusTransitionException.class)
   public ResponseEntity<ApiResponse<Void>> handleInvalidTransition(InvalidStatusTransitionException ex) {
     return ResponseEntity
-        .status(HttpStatus.BAD_REQUEST)
-        .body(ApiResponse.error(ex.getMessage()));
+            .status(HttpStatus.BAD_REQUEST)
+            .body(ApiResponse.error(ex.getMessage()));
   }
 
   // 400 — @Valid validation failures on request DTOs
@@ -52,7 +52,7 @@ public class GlobalExceptionHandler {
   // what's wrong
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<ApiResponse<Map<String, String>>> handleValidationErrors(
-      MethodArgumentNotValidException ex) {
+          MethodArgumentNotValidException ex) {
 
     Map<String, String> errors = new HashMap<>();
     ex.getBindingResult().getAllErrors().forEach(error -> {
@@ -62,15 +62,15 @@ public class GlobalExceptionHandler {
     });
 
     return ResponseEntity
-        .status(HttpStatus.BAD_REQUEST)
-        .body(new ApiResponse<>(false, "Validation failed", errors));
+            .status(HttpStatus.BAD_REQUEST)
+            .body(new ApiResponse<>(false, "Validation failed", errors));
   }
 
   // 500 — anything else we didn't specifically handle
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ApiResponse<Void>> handleGeneral(Exception ex) {
     return ResponseEntity
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body(ApiResponse.error("Something went wrong: " + ex.getMessage()));
+            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(ApiResponse.error("Something went wrong: " + ex.getMessage()));
   }
 }

@@ -30,6 +30,28 @@ import lombok.Setter;
 @Builder
 public class Goal {
 
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "appraisal_id", nullable = false)
+  private Appraisal appraisal;
+  @ManyToOne(fetch = FetchType.LAZY)
+  private User employee;
+  @Column(nullable = false, length = 200)
+  private String title;
+  @Column(columnDefinition = "TEXT")
+  private String description;
+  @Column(name = "progress_percent", nullable = false)
+  @Builder.Default
+  private Integer progressPercent = 0;
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false, length = 20)
+  @Builder.Default
+  private Status status = Status.NOT_STARTED;
+  @Column(name = "due_date")
+  private LocalDate dueDate;
+
   public enum Status {
     NOT_STARTED,
     IN_PROGESS,
@@ -50,34 +72,5 @@ public class Goal {
       return this == IN_PROGESS ? "IN_PROGRESS" : name();
     }
   }
-
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
-
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "appraisal_id", nullable = false)
-  private Appraisal appraisal;
-
-  @ManyToOne(fetch = FetchType.LAZY)
-  private User employee;
-
-  @Column(nullable = false, length = 200)
-  private String title;
-
-  @Column(columnDefinition = "TEXT")
-  private String description;
-
-  @Column(name = "progress_percent", nullable = false)
-  @Builder.Default
-  private Integer progressPercent = 0;
-
-  @Enumerated(EnumType.STRING)
-  @Column(nullable = false, length = 20)
-  @Builder.Default
-  private Status status = Status.NOT_STARTED;
-
-  @Column(name = "due_date")
-  private LocalDate dueDate;
 
 }

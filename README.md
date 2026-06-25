@@ -6,7 +6,8 @@
 **Version:** 0.0.1-SNAPSHOT  
 **Status:** Development  
 **Local API Endpoint:** [http://localhost:8080](http://localhost:8080)  
-**Tech Stack:** Java 25, Spring Boot 4.0.4, Spring Security, JPA/Hibernate, MySQL, JWT, Next.js 16.2.0, React 19.2.4, TypeScript 5.7.3, Tailwind CSS 4.2, Docker
+**Tech Stack:** Java 25, Spring Boot 4.0.4, Spring Security, JPA/Hibernate, MySQL, JWT, Next.js 16.2.0, React 19.2.4,
+TypeScript 5.7.3, Tailwind CSS 4.2, Docker
 
 ![Java](https://img.shields.io/badge/Java-25-007396?style=for-the-badge&logo=java&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0.4-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
@@ -21,7 +22,9 @@
 
 ## Project Overview
 
-AppraiseHub is a full-stack employee appraisal platform with a Spring Boot REST API and a Next.js dashboard. It supports appraisal cycles, goals, role-based access, and reporting, built with a clean layered monolith backend and a modern component-driven frontend.
+AppraiseHub is a full-stack employee appraisal platform with a Spring Boot REST API and a Next.js dashboard. It supports
+appraisal cycles, goals, role-based access, and reporting, built with a clean layered monolith backend and a modern
+component-driven frontend.
 
 **Modules:**
 
@@ -32,7 +35,8 @@ AppraiseHub is a full-stack employee appraisal platform with a Spring Boot REST 
 
 ## System Architecture
 
-The backend follows a clean layered monolith with clear separation of controller, service, and repository layers. Authentication is stateless via JWT, and DTOs isolate persistence entities from API responses.
+The backend follows a clean layered monolith with clear separation of controller, service, and repository layers.
+Authentication is stateless via JWT, and DTOs isolate persistence entities from API responses.
 
 **High-Level Flow:**
 
@@ -45,7 +49,7 @@ Client UI (Next.js) -> Spring Boot API -> MySQL
 ## Core Technology Stack
 
 | Layer     | Technology                   | Version         | Purpose                               |
-| --------- | ---------------------------- | --------------- | ------------------------------------- |
+|-----------|------------------------------|-----------------|---------------------------------------|
 | Runtime   | OpenJDK                      | 25              | Backend runtime                       |
 | Framework | Spring Boot                  | 4.0.4           | REST API and dependency injection     |
 | Security  | Spring Security + JJWT       | 6.x + 0.12.6    | JWT authentication and RBAC           |
@@ -60,13 +64,15 @@ Client UI (Next.js) -> Spring Boot API -> MySQL
 
 ## Database Schema
 
-The schema is designed to support multi-step appraisal cycles. Core entities include Users, Departments, Appraisals, and Goals, with strict constraints to prevent duplicate cycles per employee.
+The schema is designed to support multi-step appraisal cycles. Core entities include Users, Departments, Appraisals, and
+Goals, with strict constraints to prevent duplicate cycles per employee.
 
 ---
 
 ## API Architecture
 
-The API is JWT-secured and role-aware (HR, MANAGER, EMPLOYEE). Requests are authenticated via the `Authorization` header and validated by a Spring Security filter chain. DTOs isolate persistence entities from API responses.
+The API is JWT-secured and role-aware (HR, MANAGER, EMPLOYEE). Requests are authenticated via the `Authorization` header
+and validated by a Spring Security filter chain. DTOs isolate persistence entities from API responses.
 
 ---
 
@@ -89,7 +95,9 @@ The API is JWT-secured and role-aware (HR, MANAGER, EMPLOYEE). Requests are auth
 
 ## Deployment Architecture
 
-The backend includes a multi-stage Docker build and a production compose file. See [appraisal-backend/Dockerfile](appraisal-backend/Dockerfile) and [appraisal-backend/docker-compose.prod.yml](appraisal-backend/docker-compose.prod.yml).
+The backend includes a multi-stage Docker build and a production compose file.
+See [appraisal-backend/Dockerfile](appraisal-backend/Dockerfile)
+and [appraisal-backend/docker-compose.prod.yml](appraisal-backend/docker-compose.prod.yml).
 
 ---
 
@@ -126,7 +134,8 @@ npm run dev
 
 ### Configuration
 
-Development properties live in `backend/src/main/resources/application.properties`. Production defaults are in `backend/src/main/resources/application-prod.properties`.
+Development properties live in `backend/src/main/resources/application.properties`. Production defaults are in
+`backend/src/main/resources/application-prod.properties`.
 
 ```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/appraisal_database?createDatabaseIfNotExist=true
@@ -229,11 +238,16 @@ This section outlines the typical Spring Boot request & runtime flow used by the
 - **Controller → Service:** Controllers delegate business logic to `@Service` components.
 - **Service → Repository:** Services use Spring Data JPA repositories (`@Repository`) to read/write domain entities.
 - **Persistence → DB:** Hibernate (JPA) translates entity operations into SQL executed against MySQL.
-- **Security & Filters:** Requests pass through Spring Security filter chain (authentication/authorization) and any custom `OncePerRequestFilter` implementations (e.g., JWT parsing).
+- **Security & Filters:** Requests pass through Spring Security filter chain (authentication/authorization) and any
+  custom `OncePerRequestFilter` implementations (e.g., JWT parsing).
 - **DTOs & Mapping:** Controllers expose DTOs; entity ↔ DTO mapping isolates persistence concerns from API contracts.
-- **Exception Handling:** Global exceptions are handled by `@ControllerAdvice` / `@RestControllerAdvice` to standardize error responses.
-- **Profiles & Config:** Configuration lives under `src/main/resources` and uses profiles (`application.properties`, `application-prod.properties`, `application-test.properties`). Activate profiles with `--spring.profiles.active=` or via environment variables.
-- **Build & Run:** Use Maven (or the included Maven Wrapper) to build and run. Packaging produces an executable JAR which can be run with `java -jar` or executed in Docker.
+- **Exception Handling:** Global exceptions are handled by `@ControllerAdvice` / `@RestControllerAdvice` to standardize
+  error responses.
+- **Profiles & Config:** Configuration lives under `src/main/resources` and uses profiles (`application.properties`,
+  `application-prod.properties`, `application-test.properties`). Activate profiles with `--spring.profiles.active=` or
+  via environment variables.
+- **Build & Run:** Use Maven (or the included Maven Wrapper) to build and run. Packaging produces an executable JAR
+  which can be run with `java -jar` or executed in Docker.
 
 Common commands:
 
@@ -257,20 +271,28 @@ java -jar backend/target/appraisal-0.0.1-SNAPSHOT.jar
 This project (`AppraiseHub`) follows the flow below when developing, building, and deploying:
 
 - **Local dev:**
-  - Start the backend in dev mode using the Maven wrapper: `backend/mvnw.cmd spring-boot:run` (Windows) or `./backend/mvnw spring-boot:run` (macOS/Linux).
-  - Start the frontend with Next.js: `cd frontend && npm install && npm run dev`.
+    - Start the backend in dev mode using the Maven wrapper: `backend/mvnw.cmd spring-boot:run` (Windows) or
+      `./backend/mvnw spring-boot:run` (macOS/Linux).
+    - Start the frontend with Next.js: `cd frontend && npm install && npm run dev`.
 - **Configuration:**
-  - Backend properties: [backend/src/main/resources/application.properties](backend/src/main/resources/application.properties) and profile-specific files (e.g. `application-prod.properties`).
-  - Secrets and environment-specific values are provided via environment variables when running in containers or CI.
+    - Backend
+      properties: [backend/src/main/resources/application.properties](backend/src/main/resources/application.properties)
+      and profile-specific files (e.g. `application-prod.properties`).
+    - Secrets and environment-specific values are provided via environment variables when running in containers or CI.
 - **Build & Package:**
-  - Backend: `./mvnw package` produces the application artifact at `backend/target/` (e.g. `appraisal-0.0.1-SNAPSHOT.jar`).
-  - Frontend: `npm run build` in `frontend` to produce the optimized Next.js output.
+    - Backend: `./mvnw package` produces the application artifact at `backend/target/` (e.g.
+      `appraisal-0.0.1-SNAPSHOT.jar`).
+    - Frontend: `npm run build` in `frontend` to produce the optimized Next.js output.
 - **Containerization & Deployment:**
-  - Backend Dockerfile and compose files live in the `backend/` folder. Use `docker build -t appraisehub-backend:latest -f backend/Dockerfile backend` to build, and `docker-compose -f backend/docker-compose.yml up -d` to bring services up locally.
-  - The system composes the frontend and backend (and DB) in local or production compose files as needed.
+    - Backend Dockerfile and compose files live in the `backend/` folder. Use
+      `docker build -t appraisehub-backend:latest -f backend/Dockerfile backend` to build, and
+      `docker-compose -f backend/docker-compose.yml up -d` to bring services up locally.
+    - The system composes the frontend and backend (and DB) in local or production compose files as needed.
 - **Runtime interactions:**
-  - The frontend communicates with the backend via the REST API exposed at `http://localhost:8080` during development (CORS configured on the backend).
-  - Authentication is handled via JWT tokens issued by the backend and sent in the `Authorization` header by the frontend.
+    - The frontend communicates with the backend via the REST API exposed at `http://localhost:8080` during
+      development (CORS configured on the backend).
+    - Authentication is handled via JWT tokens issued by the backend and sent in the `Authorization` header by the
+      frontend.
 
 If you'd like, I can also add a minimal diagram or sequence example showing a sample API call through the stack.
 

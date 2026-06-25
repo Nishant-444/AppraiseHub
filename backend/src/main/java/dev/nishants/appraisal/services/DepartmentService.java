@@ -8,13 +8,13 @@ import dev.nishants.appraisal.dtos.DepartmentResponse;
 
 public interface DepartmentService {
 
-    DepartmentResponse createDepartment(CreateDepartmentRequest request);
+  DepartmentResponse createDepartment(CreateDepartmentRequest request);
 
-    DepartmentResponse getDepartmentById(Long id);
+  DepartmentResponse getDepartmentById(Long id);
 
-    List<DepartmentResponse> getAllDepartments();
+  List<DepartmentResponse> getAllDepartments();
 
-    DepartmentResponse updateDepartment(Long id, CreateDepartmentRequest request);
+  DepartmentResponse updateDepartment(Long id, CreateDepartmentRequest request);
 
-    void deleteDepartment(Long id);
+  void deleteDepartment(Long id);
 }

@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class DepartmentResponse {
 
-    private Long id;
-    private String name;
-    private String description;
+  private Long id;
+  private String name;
+  private String description;
 }

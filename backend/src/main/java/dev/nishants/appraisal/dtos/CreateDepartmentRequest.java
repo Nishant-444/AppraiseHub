@@ -8,8 +8,8 @@ import lombok.Setter;
 @Setter
 public class CreateDepartmentRequest {
 
-    @NotBlank(message = "Department name is required")
-    private String name;
+  @NotBlank(message = "Department name is required")
+  private String name;
 
-    private String description;
+  private String description;
 }

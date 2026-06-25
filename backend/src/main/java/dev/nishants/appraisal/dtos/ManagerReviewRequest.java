@@ -11,17 +11,17 @@ import lombok.Setter;
 @Setter
 public class ManagerReviewRequest {
 
-    @NotBlank(message = "Please describe the employee's strengths")
-    private String managerStrengths;
+  @NotBlank(message = "Please describe the employee's strengths")
+  private String managerStrengths;
 
-    @NotBlank(message = "Please describe areas for improvement")
-    private String managerImprovements;
+  @NotBlank(message = "Please describe areas for improvement")
+  private String managerImprovements;
 
-    // Optional overall comments
-    private String managerComments;
+  // Optional overall comments
+  private String managerComments;
 
-    @NotNull(message = "Manager rating is required")
-    @Min(value = 1, message = "Rating must be at least 1")
-    @Max(value = 5, message = "Rating must be at most 5")
-    private Integer managerRating;
+  @NotNull(message = "Manager rating is required")
+  @Min(value = 1, message = "Rating must be at least 1")
+  @Max(value = 5, message = "Rating must be at most 5")
+  private Integer managerRating;
 }

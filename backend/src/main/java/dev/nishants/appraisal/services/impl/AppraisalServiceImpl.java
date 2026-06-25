@@ -48,9 +48,9 @@ public class AppraisalServiceImpl implements AppraisalService {
   public List<AppraisalResponse> getAllAppraisals() {
     authorizationService.requireHr();
     return appraisalRepository.findAllWithDetails()
-        .stream()
-        .map(AppraisalMapper::toResponse)
-        .toList();
+            .stream()
+            .map(AppraisalMapper::toResponse)
+            .toList();
   }
 
   @Override
@@ -61,15 +61,15 @@ public class AppraisalServiceImpl implements AppraisalService {
     LocalDate yearStart = getYearStart(request.getCycleStartDate());
     LocalDate yearEnd = getYearEnd(request.getCycleStartDate());
     if (appraisalRepository.existsByEmployeeIdAndCycleStartDateBetween(
-        request.getEmployeeId(), yearStart, yearEnd)) {
+            request.getEmployeeId(), yearStart, yearEnd)) {
       throw new DuplicateResourceException("Employee already has an appraisal cycle for year "
-          + request.getCycleStartDate().getYear());
+              + request.getCycleStartDate().getYear());
     }
 
     if (appraisalRepository.existsByCycleNameAndEmployeeId(
-        request.getCycleName(), request.getEmployeeId())) {
+            request.getCycleName(), request.getEmployeeId())) {
       throw new DuplicateResourceException("Appraisal already exists for this employee in cycle: "
-          + request.getCycleName());
+              + request.getCycleName());
     }
 
     User employee = findUserById(request.getEmployeeId());
@@ -79,27 +79,27 @@ public class AppraisalServiceImpl implements AppraisalService {
       throw new RuntimeException("The assigned manager must have the MANAGER role");
 
     Appraisal appraisal = Appraisal.builder()
-        .cycleName(request.getCycleName())
-        .cycleStartDate(request.getCycleStartDate())
-        .cycleEndDate(request.getCycleEndDate())
-        .cycleStatus(CycleStatus.ACTIVE)
-        .employee(employee)
-        .manager(manager)
-        .appraisalStatus(AppraisalStatus.PENDING)
-        .build();
+            .cycleName(request.getCycleName())
+            .cycleStartDate(request.getCycleStartDate())
+            .cycleEndDate(request.getCycleEndDate())
+            .cycleStatus(CycleStatus.ACTIVE)
+            .employee(employee)
+            .manager(manager)
+            .appraisalStatus(AppraisalStatus.PENDING)
+            .build();
 
     appraisalRepository.save(appraisal);
 
     notificationService.send(
-        employee.getId(),
-        "Appraisal cycle started",
-        "Your appraisal for cycle '" + request.getCycleName()
-            + "' has been created. Please submit your self-assessment.",
-        Type.CYCLE_STARTED,
-        NotificationPayload.forCycle(
-            request.getCycleName(),
-            request.getCycleStartDate().toString(),
-            request.getCycleEndDate().toString()));
+            employee.getId(),
+            "Appraisal cycle started",
+            "Your appraisal for cycle '" + request.getCycleName()
+                    + "' has been created. Please submit your self-assessment.",
+            Type.CYCLE_STARTED,
+            NotificationPayload.forCycle(
+                    request.getCycleName(),
+                    request.getCycleStartDate().toString(),
+                    request.getCycleEndDate().toString()));
 
     return AppraisalMapper.toResponse(appraisal);
   }
@@ -113,11 +113,11 @@ public class AppraisalServiceImpl implements AppraisalService {
 
     // Fetch all active users who have a manager (both EMPLOYEE and MANAGER roles)
     List<User> employees = request.getDepartmentId() != null
-        ? userRepository.findByDepartmentIdAndIsActiveTrue(request.getDepartmentId())
+            ? userRepository.findByDepartmentIdAndIsActiveTrue(request.getDepartmentId())
             .stream()
             .filter(u -> u.getRole() == Role.EMPLOYEE || u.getRole() == Role.MANAGER)
             .collect(Collectors.toList())
-        : userRepository.findByIsActiveTrue()
+            : userRepository.findByIsActiveTrue()
             .stream()
             .filter(u -> u.getRole() == Role.EMPLOYEE || u.getRole() == Role.MANAGER)
             .collect(Collectors.toList());
@@ -130,65 +130,65 @@ public class AppraisalServiceImpl implements AppraisalService {
         continue;
       }
       if (appraisalRepository.existsByEmployeeIdAndCycleStartDateBetween(
-          employee.getId(), yearStart, yearEnd)) {
+              employee.getId(), yearStart, yearEnd)) {
         skippedAlreadyExists++;
         continue;
       }
 
       Appraisal appraisal = Appraisal.builder()
-          .cycleName(request.getCycleName())
-          .cycleStartDate(request.getCycleStartDate())
-          .cycleEndDate(request.getCycleEndDate())
-          .cycleStatus(CycleStatus.ACTIVE)
-          .employee(employee)
-          .manager(employee.getManager())
-          .appraisalStatus(AppraisalStatus.PENDING)
-          .build();
+              .cycleName(request.getCycleName())
+              .cycleStartDate(request.getCycleStartDate())
+              .cycleEndDate(request.getCycleEndDate())
+              .cycleStatus(CycleStatus.ACTIVE)
+              .employee(employee)
+              .manager(employee.getManager())
+              .appraisalStatus(AppraisalStatus.PENDING)
+              .build();
 
       appraisalRepository.save(appraisal);
 
       notificationService.send(
-          employee.getId(),
-          "Appraisal cycle started",
-          "Your appraisal for cycle '" + request.getCycleName()
-              + "' has been created. Please submit your self-assessment.",
-          Type.CYCLE_STARTED,
-          NotificationPayload.forCycle(
-              request.getCycleName(),
-              request.getCycleStartDate().toString(),
-              request.getCycleEndDate().toString()));
+              employee.getId(),
+              "Appraisal cycle started",
+              "Your appraisal for cycle '" + request.getCycleName()
+                      + "' has been created. Please submit your self-assessment.",
+              Type.CYCLE_STARTED,
+              NotificationPayload.forCycle(
+                      request.getCycleName(),
+                      request.getCycleStartDate().toString(),
+                      request.getCycleEndDate().toString()));
       created++;
     }
 
     return new BulkCycleResponse(request.getCycleName(), employees.size(),
-        created, skippedAlreadyExists, skippedNoManager);
+            created, skippedAlreadyExists, skippedNoManager);
   }
 
   private void validateCycleYear(String cycleName, LocalDate startDate, LocalDate endDate) {
     LocalDate yearStart = getYearStart(startDate);
     LocalDate yearEnd = getYearEnd(startDate);
     List<String> existingCycleNames = appraisalRepository
-        .findDistinctCycleNamesInYear(yearStart, yearEnd);
+            .findDistinctCycleNamesInYear(yearStart, yearEnd);
 
     if (!existingCycleNames.isEmpty() && !existingCycleNames.contains(cycleName)) {
       throw new DuplicateResourceException("An appraisal cycle already exists for year "
-          + startDate.getYear() + ": " + existingCycleNames.get(0));
+              + startDate.getYear() + ": " + existingCycleNames.get(0));
     }
 
     if (existingCycleNames.size() > 1) {
       throw new DuplicateResourceException("Multiple appraisal cycles already exist for year "
-          + startDate.getYear() + ". Please resolve before creating a new cycle.");
+              + startDate.getYear() + ". Please resolve before creating a new cycle.");
     }
 
     appraisalRepository.findFirstByCycleNameAndCycleStartDateBetween(
-        cycleName, yearStart, yearEnd)
-        .ifPresent(existing -> {
-          if (!existing.getCycleStartDate().equals(startDate)
-              || !existing.getCycleEndDate().equals(endDate)) {
-            throw new DuplicateResourceException("Cycle dates must match existing cycle '" +
-                cycleName + "'.");
-          }
-        });
+                    cycleName, yearStart, yearEnd)
+            .ifPresent(existing -> {
+              if (!existing.getCycleStartDate().equals(startDate)
+                      || !existing.getCycleEndDate().equals(endDate)) {
+                throw new DuplicateResourceException("Cycle dates must match existing cycle '" +
+                        cycleName + "'.");
+              }
+            });
   }
 
   private LocalDate getYearStart(LocalDate cycleStartDate) {
@@ -205,28 +205,28 @@ public class AppraisalServiceImpl implements AppraisalService {
   @Transactional(readOnly = true)
   public List<AppraisalResponse> getMyAppraisals(Long employeeId) {
     authorizationService.requireSelfOrHr(
-        employeeId,
-        "Access denied: you can only view your own appraisals");
+            employeeId,
+            "Access denied: you can only view your own appraisals");
     return appraisalRepository.findByEmployeeId(employeeId)
-        .stream().map(AppraisalMapper::toResponse).collect(Collectors.toList());
+            .stream().map(AppraisalMapper::toResponse).collect(Collectors.toList());
   }
 
   @Override
   @Transactional(readOnly = true)
   public List<AppraisalResponse> getTeamAppraisals(Long managerId) {
     authorizationService.requireSelfOrHr(
-        managerId,
-        "Access denied: you can only view your own team appraisals");
+            managerId,
+            "Access denied: you can only view your own team appraisals");
     return appraisalRepository.findByManagerId(managerId)
-        .stream().map(AppraisalMapper::toResponse).collect(Collectors.toList());
+            .stream().map(AppraisalMapper::toResponse).collect(Collectors.toList());
   }
 
   @Override
   @Transactional(readOnly = true)
   public AppraisalResponse getAppraisalById(Long appraisalId, Long requesterId) {
     User currentUser = authorizationService.requireSelfOrHr(
-        requesterId,
-        "Access denied: requester mismatch");
+            requesterId,
+            "Access denied: requester mismatch");
     Appraisal appraisal = findAppraisalById(appraisalId);
     boolean isEmployee = appraisal.getEmployee().getId().equals(requesterId);
     boolean isManager = appraisal.getManager().getId().equals(requesterId);
@@ -240,8 +240,8 @@ public class AppraisalServiceImpl implements AppraisalService {
   @Override
   @Transactional
   public AppraisalResponse saveSelfAssessmentDraft(Long appraisalId,
-      SelfAssessmentRequest request,
-      Long employeeId) {
+                                                   SelfAssessmentRequest request,
+                                                   Long employeeId) {
     authorizationService.requireSelf(employeeId, "Access denied: requester mismatch");
     Appraisal appraisal = findAppraisalById(appraisalId);
     requireEmployee(appraisal, employeeId);
@@ -249,7 +249,7 @@ public class AppraisalServiceImpl implements AppraisalService {
     AppraisalStatus status = appraisal.getAppraisalStatus();
     if (status != AppraisalStatus.PENDING && status != AppraisalStatus.EMPLOYEE_DRAFT) {
       throw new InvalidStatusTransitionException(
-          "Cannot save draft. Self-assessment is already submitted. Current status: " + status);
+              "Cannot save draft. Self-assessment is already submitted. Current status: " + status);
     }
 
     applySelfAssessmentFields(appraisal, request);
@@ -264,8 +264,8 @@ public class AppraisalServiceImpl implements AppraisalService {
   @Override
   @Transactional
   public AppraisalResponse submitSelfAssessment(Long appraisalId,
-      SelfAssessmentRequest request,
-      Long employeeId) {
+                                                SelfAssessmentRequest request,
+                                                Long employeeId) {
     authorizationService.requireSelf(employeeId, "Access denied: requester mismatch");
     Appraisal appraisal = findAppraisalById(appraisalId);
     requireEmployee(appraisal, employeeId);
@@ -273,7 +273,7 @@ public class AppraisalServiceImpl implements AppraisalService {
     AppraisalStatus status = appraisal.getAppraisalStatus();
     if (status != AppraisalStatus.PENDING && status != AppraisalStatus.EMPLOYEE_DRAFT) {
       throw new InvalidStatusTransitionException(
-          "Cannot submit self-assessment. Current status: " + status);
+              "Cannot submit self-assessment. Current status: " + status);
     }
 
     applySelfAssessmentFields(appraisal, request);
@@ -282,14 +282,14 @@ public class AppraisalServiceImpl implements AppraisalService {
     appraisalRepository.save(appraisal);
 
     notificationService.send(
-        appraisal.getManager().getId(),
-        "Self-assessment submitted",
-        appraisal.getEmployee().getFullName() + " has submitted their self-assessment for '"
-            + appraisal.getCycleName() + "'. Please review and rate.",
-        Type.SELF_ASSESSMENT_SUBMITTED,
-        NotificationPayload.forEmployeeCycle(
-            appraisal.getEmployee().getFullName(),
-            appraisal.getCycleName()));
+            appraisal.getManager().getId(),
+            "Self-assessment submitted",
+            appraisal.getEmployee().getFullName() + " has submitted their self-assessment for '"
+                    + appraisal.getCycleName() + "'. Please review and rate.",
+            Type.SELF_ASSESSMENT_SUBMITTED,
+            NotificationPayload.forEmployeeCycle(
+                    appraisal.getEmployee().getFullName(),
+                    appraisal.getCycleName()));
 
     return AppraisalMapper.toResponse(appraisal);
   }
@@ -299,8 +299,8 @@ public class AppraisalServiceImpl implements AppraisalService {
   @Override
   @Transactional
   public AppraisalResponse saveManagerReviewDraft(Long appraisalId,
-      ManagerReviewRequest request,
-      Long managerId) {
+                                                  ManagerReviewRequest request,
+                                                  Long managerId) {
     authorizationService.requireSelf(managerId, "Access denied: requester mismatch");
     Appraisal appraisal = findAppraisalById(appraisalId);
     requireManager(appraisal, managerId);
@@ -308,7 +308,7 @@ public class AppraisalServiceImpl implements AppraisalService {
     AppraisalStatus status = appraisal.getAppraisalStatus();
     if (status != AppraisalStatus.SELF_SUBMITTED && status != AppraisalStatus.MANAGER_DRAFT) {
       throw new InvalidStatusTransitionException(
-          "Cannot save manager draft. Current status: " + status);
+              "Cannot save manager draft. Current status: " + status);
     }
 
     applyManagerReviewFields(appraisal, request);
@@ -323,8 +323,8 @@ public class AppraisalServiceImpl implements AppraisalService {
   @Override
   @Transactional
   public AppraisalResponse submitManagerReview(Long appraisalId,
-      ManagerReviewRequest request,
-      Long managerId) {
+                                               ManagerReviewRequest request,
+                                               Long managerId) {
     authorizationService.requireSelf(managerId, "Access denied: requester mismatch");
     Appraisal appraisal = findAppraisalById(appraisalId);
     requireManager(appraisal, managerId);
@@ -332,7 +332,7 @@ public class AppraisalServiceImpl implements AppraisalService {
     AppraisalStatus status = appraisal.getAppraisalStatus();
     if (status != AppraisalStatus.SELF_SUBMITTED && status != AppraisalStatus.MANAGER_DRAFT) {
       throw new InvalidStatusTransitionException(
-          "Cannot submit manager review. Current status: " + status);
+              "Cannot submit manager review. Current status: " + status);
     }
 
     applyManagerReviewFields(appraisal, request);
@@ -343,22 +343,22 @@ public class AppraisalServiceImpl implements AppraisalService {
     List<User> hrUsers = userRepository.findByRoleAndIsActiveTrue(Role.HR);
     for (User hr : hrUsers) {
       notificationService.send(
-          hr.getId(),
-          "Appraisal ready for approval",
-          appraisal.getEmployee().getFullName() + "'s appraisal for '"
-              + appraisal.getCycleName() + "' is ready for your approval.",
-          Type.MANAGER_REVIEW_DONE,
-          NotificationPayload.forCycleName(appraisal.getCycleName()));
+              hr.getId(),
+              "Appraisal ready for approval",
+              appraisal.getEmployee().getFullName() + "'s appraisal for '"
+                      + appraisal.getCycleName() + "' is ready for your approval.",
+              Type.MANAGER_REVIEW_DONE,
+              NotificationPayload.forCycleName(appraisal.getCycleName()));
     }
 
     // Notify the employee
     notificationService.send(
-        appraisal.getEmployee().getId(),
-        "Your appraisal has been reviewed",
-        "Your manager has completed their review for '"
-            + appraisal.getCycleName() + "'. Awaiting HR approval.",
-        Type.MANAGER_REVIEW_DONE,
-        NotificationPayload.forCycleName(appraisal.getCycleName()));
+            appraisal.getEmployee().getId(),
+            "Your appraisal has been reviewed",
+            "Your manager has completed their review for '"
+                    + appraisal.getCycleName() + "'. Awaiting HR approval.",
+            Type.MANAGER_REVIEW_DONE,
+            NotificationPayload.forCycleName(appraisal.getCycleName()));
 
     return AppraisalMapper.toResponse(appraisal);
   }
@@ -373,7 +373,7 @@ public class AppraisalServiceImpl implements AppraisalService {
 
     if (appraisal.getAppraisalStatus() != AppraisalStatus.MANAGER_REVIEWED) {
       throw new InvalidStatusTransitionException(
-          "Cannot approve. Current status: " + appraisal.getAppraisalStatus());
+              "Cannot approve. Current status: " + appraisal.getAppraisalStatus());
     }
 
     appraisal.setAppraisalStatus(AppraisalStatus.APPROVED);
@@ -381,12 +381,12 @@ public class AppraisalServiceImpl implements AppraisalService {
     appraisalRepository.save(appraisal);
 
     notificationService.send(
-        appraisal.getEmployee().getId(),
-        "Appraisal approved",
-        "Your appraisal for '" + appraisal.getCycleName()
-            + "' has been approved. Please review and acknowledge.",
-        Type.APPRAISAL_APPROVED,
-        NotificationPayload.forCycleName(appraisal.getCycleName()));
+            appraisal.getEmployee().getId(),
+            "Appraisal approved",
+            "Your appraisal for '" + appraisal.getCycleName()
+                    + "' has been approved. Please review and acknowledge.",
+            Type.APPRAISAL_APPROVED,
+            NotificationPayload.forCycleName(appraisal.getCycleName()));
 
     return AppraisalMapper.toResponse(appraisal);
   }
@@ -402,7 +402,7 @@ public class AppraisalServiceImpl implements AppraisalService {
 
     if (appraisal.getAppraisalStatus() != AppraisalStatus.APPROVED) {
       throw new InvalidStatusTransitionException(
-          "Cannot acknowledge. Current status: " + appraisal.getAppraisalStatus());
+              "Cannot acknowledge. Current status: " + appraisal.getAppraisalStatus());
     }
 
     appraisal.setAppraisalStatus(AppraisalStatus.ACKNOWLEDGED);
@@ -442,11 +442,11 @@ public class AppraisalServiceImpl implements AppraisalService {
 
   private Appraisal findAppraisalById(Long id) {
     return appraisalRepository.findByIdWithDetails(id)
-        .orElseThrow(() -> new RuntimeException("Appraisal not found with id: " + id));
+            .orElseThrow(() -> new RuntimeException("Appraisal not found with id: " + id));
   }
 
   private User findUserById(Long id) {
     return userRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+            .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
   }
 }

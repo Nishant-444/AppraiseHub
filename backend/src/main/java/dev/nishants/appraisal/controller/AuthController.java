@@ -18,23 +18,23 @@ import dev.nishants.appraisal.services.AuthService;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final AuthService authService;
+  private final AuthService authService;
 
-    // POST /api/auth/login
-    @PostMapping("/login")
-    public ResponseEntity<ApiResponse<AuthResponse>> login(
-            @Valid @RequestBody LoginRequest request) {
+  // POST /api/auth/login
+  @PostMapping("/login")
+  public ResponseEntity<ApiResponse<AuthResponse>> login(
+          @Valid @RequestBody LoginRequest request) {
 
-        AuthResponse response = authService.login(request);
-        return ResponseEntity.ok(ApiResponse.success("Login successful", response));
-    }
+    AuthResponse response = authService.login(request);
+    return ResponseEntity.ok(ApiResponse.success("Login successful", response));
+  }
 
-    // GET /api/auth/me
-    @GetMapping("/me")
-    public ResponseEntity<ApiResponse<AuthResponse>> getCurrentUser() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String email = auth.getName();
-        AuthResponse response = authService.getCurrentUser(email);
-        return ResponseEntity.ok(ApiResponse.success("User fetched successfully", response));
-    }
+  // GET /api/auth/me
+  @GetMapping("/me")
+  public ResponseEntity<ApiResponse<AuthResponse>> getCurrentUser() {
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    String email = auth.getName();
+    AuthResponse response = authService.getCurrentUser(email);
+    return ResponseEntity.ok(ApiResponse.success("User fetched successfully", response));
+  }
 }

@@ -7,9 +7,9 @@ import lombok.Setter;
 @Setter
 public class UpdateUserRequest {
 
-    private String fullName;
-    private String jobTitle;
-    private Long departmentId;
-    private Long managerId;
-    private Boolean isActive;
+  private String fullName;
+  private String jobTitle;
+  private Long departmentId;
+  private Long managerId;
+  private Boolean isActive;
 }

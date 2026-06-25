@@ -1,21 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useAuth } from "@/lib/auth-context";
-import { apiClient } from "@/lib/api/client";
-import type { Appraisal, Department, User } from "@/lib/api/types";
+import {useEffect, useState} from "react";
+import {useAuth} from "@/lib/auth-context";
+import {apiClient} from "@/lib/api/client";
+import type {Appraisal, Department, User} from "@/lib/api/types";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import {Button} from "@/components/ui/button";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle,} from "@/components/ui/card";
+import {Badge} from "@/components/ui/badge";
+import {Input} from "@/components/ui/input";
+import {Label} from "@/components/ui/label";
 import {
 	Dialog,
 	DialogContent,
@@ -25,23 +19,10 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
-import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from "@/components/ui/table";
-import { toast } from "sonner";
-import { Plus, Search, Loader2, ClipboardCheck } from "lucide-react";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue,} from "@/components/ui/select";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/components/ui/table";
+import {toast} from "sonner";
+import {ClipboardCheck, Loader2, Plus, Search} from "lucide-react";
 
 const statusColors: Record<string, string> = {
 	PENDING: "bg-yellow-100 text-yellow-800",
@@ -54,7 +35,7 @@ const statusColors: Record<string, string> = {
 };
 
 export default function AppraisalsPage() {
-	const { user } = useAuth();
+	const {user} = useAuth();
 	const [appraisals, setAppraisals] = useState<Appraisal[]>([]);
 	const [departments, setDepartments] = useState<Department[]>([]);
 	const [users, setUsers] = useState<User[]>([]);
@@ -226,7 +207,7 @@ export default function AppraisalsPage() {
 					<Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
 						<DialogTrigger asChild>
 							<Button>
-								<Plus className="mr-2 h-4 w-4" />
+								<Plus className="mr-2 h-4 w-4"/>
 								Create Cycle
 							</Button>
 						</DialogTrigger>
@@ -248,7 +229,7 @@ export default function AppraisalsPage() {
 										}
 									>
 										<SelectTrigger id="scope">
-											<SelectValue placeholder="All Employees" />
+											<SelectValue placeholder="All Employees"/>
 										</SelectTrigger>
 										<SelectContent>
 											<SelectItem value="all">All Employees</SelectItem>
@@ -291,7 +272,7 @@ export default function AppraisalsPage() {
 										<Label htmlFor="department">Department</Label>
 										<Select value={cycleDepId} onValueChange={setCycleDepId}>
 											<SelectTrigger>
-												<SelectValue placeholder="All Departments" />
+												<SelectValue placeholder="All Departments"/>
 											</SelectTrigger>
 											<SelectContent>
 												<SelectItem value="all">All Departments</SelectItem>
@@ -313,7 +294,7 @@ export default function AppraisalsPage() {
 												onValueChange={setSelectedEmployeeId}
 											>
 												<SelectTrigger id="employee">
-													<SelectValue placeholder="Select employee" />
+													<SelectValue placeholder="Select employee"/>
 												</SelectTrigger>
 												<SelectContent>
 													{users
@@ -333,7 +314,7 @@ export default function AppraisalsPage() {
 												onValueChange={setSelectedManagerId}
 											>
 												<SelectTrigger id="manager">
-													<SelectValue placeholder="Select manager" />
+													<SelectValue placeholder="Select manager"/>
 												</SelectTrigger>
 												<SelectContent>
 													{users
@@ -358,7 +339,7 @@ export default function AppraisalsPage() {
 								</Button>
 								<Button onClick={handleCreateCycle} disabled={isCreating}>
 									{isCreating && (
-										<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+										<Loader2 className="mr-2 h-4 w-4 animate-spin"/>
 									)}
 									Create Cycle
 								</Button>
@@ -379,7 +360,7 @@ export default function AppraisalsPage() {
 						</div>
 						<div className="flex flex-col gap-2 sm:flex-row">
 							<div className="relative">
-								<Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+								<Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"/>
 								<Input
 									placeholder="Search..."
 									value={searchQuery}
@@ -389,7 +370,7 @@ export default function AppraisalsPage() {
 							</div>
 							<Select value={statusFilter} onValueChange={setStatusFilter}>
 								<SelectTrigger className="w-[180px]">
-									<SelectValue placeholder="Filter by status" />
+									<SelectValue placeholder="Filter by status"/>
 								</SelectTrigger>
 								<SelectContent>
 									<SelectItem value="all">All Statuses</SelectItem>
@@ -410,11 +391,11 @@ export default function AppraisalsPage() {
 				<CardContent>
 					{isLoading ? (
 						<div className="flex items-center justify-center py-8">
-							<Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+							<Loader2 className="h-8 w-8 animate-spin text-muted-foreground"/>
 						</div>
 					) : filteredAppraisals.length === 0 ? (
 						<div className="flex flex-col items-center justify-center py-12 text-center">
-							<ClipboardCheck className="mb-4 h-12 w-12 text-muted-foreground" />
+							<ClipboardCheck className="mb-4 h-12 w-12 text-muted-foreground"/>
 							<h3 className="text-lg font-medium">No appraisals found</h3>
 							<p className="text-sm text-muted-foreground">
 								{user.role === "HR"

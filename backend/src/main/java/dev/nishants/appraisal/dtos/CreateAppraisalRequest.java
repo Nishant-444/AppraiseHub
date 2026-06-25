@@ -13,18 +13,18 @@ import jakarta.validation.constraints.NotNull;
 @Setter
 public class CreateAppraisalRequest {
 
-    @NotBlank(message = "Cycle name is required")
-    private String cycleName;
+  @NotBlank(message = "Cycle name is required")
+  private String cycleName;
 
-    @NotNull(message = "Cycle start date is required")
-    private LocalDate cycleStartDate;
+  @NotNull(message = "Cycle start date is required")
+  private LocalDate cycleStartDate;
 
-    @NotNull(message = "Cycle end date is required")
-    private LocalDate cycleEndDate;
+  @NotNull(message = "Cycle end date is required")
+  private LocalDate cycleEndDate;
 
-    @NotNull(message = "Employee ID is required")
-    private Long employeeId;
+  @NotNull(message = "Employee ID is required")
+  private Long employeeId;
 
-    @NotNull(message = "Manager ID is required")
-    private Long managerId;
+  @NotNull(message = "Manager ID is required")
+  private Long managerId;
 }

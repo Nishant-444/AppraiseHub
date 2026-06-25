@@ -9,6 +9,6 @@ import lombok.Setter;
 @Setter
 public class GoalProgressRequest {
 
-    @NotNull(message = "Status is required")
-    private Status status;
+  @NotNull(message = "Status is required")
+  private Status status;
 }

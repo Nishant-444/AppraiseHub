@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
   public UserResponse createUser(CreateUserRequest request) {
     if (userRepository.existsByEmail(request.getEmail())) {
       throw new DuplicateResourceException(
-          "User already exists with email: " + request.getEmail());
+              "User already exists with email: " + request.getEmail());
     }
 
     // Role-based validation
@@ -50,23 +50,23 @@ public class UserServiceImpl implements UserService {
     }
 
     User user = User.builder()
-        .fullName(request.getFullName())
-        .email(request.getEmail())
-        .password(passwordEncoder.encode(request.getPassword()))
-        .role(request.getRole())
-        .jobTitle(request.getJobTitle())
-        .isActive(true)
-        .build();
+            .fullName(request.getFullName())
+            .email(request.getEmail())
+            .password(passwordEncoder.encode(request.getPassword()))
+            .role(request.getRole())
+            .jobTitle(request.getJobTitle())
+            .isActive(true)
+            .build();
 
     if (request.getDepartmentId() != null) {
       Department dept = departmentRepository.findById(request.getDepartmentId())
-          .orElseThrow(() -> new ResourceNotFoundException("Department", request.getDepartmentId()));
+              .orElseThrow(() -> new ResourceNotFoundException("Department", request.getDepartmentId()));
       user.setDepartment(dept);
     }
 
     if (request.getManagerId() != null) {
       User manager = userRepository.findById(request.getManagerId())
-          .orElseThrow(() -> new ResourceNotFoundException("Manager", request.getManagerId()));
+              .orElseThrow(() -> new ResourceNotFoundException("Manager", request.getManagerId()));
       if (manager.getRole() != Role.MANAGER) {
         throw new IllegalArgumentException("Assigned manager must have the MANAGER role");
       }
@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
   @Transactional(readOnly = true)
   public UserResponse getMe(Long userId) {
     authorizationService.requireSelfOrHr(userId,
-        "Access denied: you can only view your own profile");
+            "Access denied: you can only view your own profile");
     return UserMapper.toResponse(findById(userId));
   }
 
@@ -89,7 +89,7 @@ public class UserServiceImpl implements UserService {
   @Transactional(readOnly = true)
   public UserResponse getUserById(Long userId) {
     authorizationService.requireSelfOrHr(userId,
-        "Access denied: you can only view your own profile");
+            "Access denied: you can only view your own profile");
     return UserMapper.toResponse(findById(userId));
   }
 
@@ -98,21 +98,21 @@ public class UserServiceImpl implements UserService {
   public List<UserResponse> getAllUsers() {
     authorizationService.requireHr();
     return userRepository.findAllWithDetails()
-        .stream()
-        .map(UserMapper::toResponse)
-        .collect(Collectors.toList());
+            .stream()
+            .map(UserMapper::toResponse)
+            .collect(Collectors.toList());
   }
 
   @Override
   @Transactional(readOnly = true)
   public List<UserResponse> getTeamByManager(Long managerId) {
     authorizationService.requireSelfOrHr(
-        managerId,
-        "Access denied: you can only view your own team");
+            managerId,
+            "Access denied: you can only view your own team");
     return userRepository.findByManagerId(managerId)
-        .stream()
-        .map(UserMapper::toResponse)
-        .collect(Collectors.toList());
+            .stream()
+            .map(UserMapper::toResponse)
+            .collect(Collectors.toList());
   }
 
   @Override
@@ -125,9 +125,9 @@ public class UserServiceImpl implements UserService {
 
     if (currentUser.getRole() == Role.MANAGER) {
       return userRepository.findByManagerId(currentUser.getId())
-          .stream()
-          .map(UserMapper::toResponse)
-          .collect(Collectors.toList());
+              .stream()
+              .map(UserMapper::toResponse)
+              .collect(Collectors.toList());
     }
 
     if (currentUser.getManager() == null) {
@@ -135,10 +135,10 @@ public class UserServiceImpl implements UserService {
     }
 
     return userRepository.findByManagerId(currentUser.getManager().getId())
-        .stream()
-        .filter(user -> !user.getId().equals(currentUser.getId()))
-        .map(UserMapper::toResponse)
-        .collect(Collectors.toList());
+            .stream()
+            .filter(user -> !user.getId().equals(currentUser.getId()))
+            .map(UserMapper::toResponse)
+            .collect(Collectors.toList());
   }
 
   @Override
@@ -160,13 +160,13 @@ public class UserServiceImpl implements UserService {
 
     if (request.getDepartmentId() != null) {
       Department dept = departmentRepository.findById(request.getDepartmentId())
-          .orElseThrow(() -> new ResourceNotFoundException("Department", request.getDepartmentId()));
+              .orElseThrow(() -> new ResourceNotFoundException("Department", request.getDepartmentId()));
       user.setDepartment(dept);
     }
 
     if (request.getManagerId() != null) {
       User manager = userRepository.findById(request.getManagerId())
-          .orElseThrow(() -> new ResourceNotFoundException("Manager", request.getManagerId()));
+              .orElseThrow(() -> new ResourceNotFoundException("Manager", request.getManagerId()));
       user.setManager(manager);
     }
 
@@ -185,6 +185,6 @@ public class UserServiceImpl implements UserService {
 
   private User findById(Long id) {
     return userRepository.findByIdWithDetails(id)
-        .orElseThrow(() -> new ResourceNotFoundException("User", id));
+            .orElseThrow(() -> new ResourceNotFoundException("User", id));
   }
 }

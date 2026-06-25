@@ -28,13 +28,13 @@ public class DepartmentServiceImpl implements DepartmentService {
   public DepartmentResponse createDepartment(CreateDepartmentRequest request) {
     if (departmentRepository.existsByName(request.getName())) {
       throw new DuplicateResourceException(
-          "Department already exists with name: " + request.getName());
+              "Department already exists with name: " + request.getName());
     }
 
     Department department = Department.builder()
-        .name(request.getName())
-        .description(request.getDescription())
-        .build();
+            .name(request.getName())
+            .description(request.getDescription())
+            .build();
 
     departmentRepository.save(department);
     return DepartmentMapper.toResponse(department);
@@ -44,7 +44,7 @@ public class DepartmentServiceImpl implements DepartmentService {
   @Transactional(readOnly = true)
   public DepartmentResponse getDepartmentById(Long id) {
     Department dept = departmentRepository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("Department", id));
+            .orElseThrow(() -> new ResourceNotFoundException("Department", id));
     return DepartmentMapper.toResponse(dept);
   }
 
@@ -52,16 +52,16 @@ public class DepartmentServiceImpl implements DepartmentService {
   @Transactional(readOnly = true)
   public List<DepartmentResponse> getAllDepartments() {
     return departmentRepository.findAll()
-        .stream()
-        .map(DepartmentMapper::toResponse)
-        .collect(Collectors.toList());
+            .stream()
+            .map(DepartmentMapper::toResponse)
+            .collect(Collectors.toList());
   }
 
   @Override
   @Transactional
   public DepartmentResponse updateDepartment(Long id, CreateDepartmentRequest request) {
     Department dept = departmentRepository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("Department", id));
+            .orElseThrow(() -> new ResourceNotFoundException("Department", id));
 
     if (request.getName() != null)
       dept.setName(request.getName());
@@ -76,7 +76,7 @@ public class DepartmentServiceImpl implements DepartmentService {
   @Transactional
   public void deleteDepartment(Long id) {
     Department dept = departmentRepository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("Department", id));
+            .orElseThrow(() -> new ResourceNotFoundException("Department", id));
     departmentRepository.delete(dept);
   }
 }

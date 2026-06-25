@@ -9,9 +9,9 @@ import lombok.Setter;
 @AllArgsConstructor
 public class BulkCycleResponse {
 
-    private String cycleName;
-    private int totalEmployees;
-    private int created;
-    private int skippedAlreadyExists;
-    private int skippedNoManager;
+  private String cycleName;
+  private int totalEmployees;
+  private int created;
+  private int skippedAlreadyExists;
+  private int skippedNoManager;
 }

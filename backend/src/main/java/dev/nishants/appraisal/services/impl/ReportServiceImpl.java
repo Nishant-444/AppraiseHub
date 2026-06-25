@@ -42,7 +42,7 @@ public class ReportServiceImpl implements ReportService {
     List<Object[]> rows = appraisalRepository.countByStatusForCycle(cycleName);
 
     long pending = 0, employeeDraft = 0, selfSubmitted = 0,
-        managerDraft = 0, managerReviewed = 0, approved = 0, acknowledged = 0;
+            managerDraft = 0, managerReviewed = 0, approved = 0, acknowledged = 0;
 
     for (Object[] row : rows) {
       AppraisalStatus status = (AppraisalStatus) row[0];
@@ -59,26 +59,26 @@ public class ReportServiceImpl implements ReportService {
     }
 
     long total = pending + employeeDraft + selfSubmitted + managerDraft
-        + managerReviewed + approved + acknowledged;
+            + managerReviewed + approved + acknowledged;
 
     double completionPct = total == 0 ? 0.0
-        : Math.round(((approved + acknowledged) * 100.0 / total) * 10.0) / 10.0;
+            : Math.round(((approved + acknowledged) * 100.0 / total) * 10.0) / 10.0;
 
     Double avgRating = appraisalRepository.averageManagerRatingForCycle(cycleName);
 
     return CycleSummaryResponse.builder()
-        .cycleName(cycleName)
-        .totalAppraisals(total)
-        .pending(pending)
-        .employeeDraft(employeeDraft)
-        .selfSubmitted(selfSubmitted)
-        .managerDraft(managerDraft)
-        .managerReviewed(managerReviewed)
-        .approved(approved)
-        .acknowledged(acknowledged)
-        .completionPercentage(completionPct)
-        .averageManagerRating(avgRating != null ? Math.round(avgRating * 10.0) / 10.0 : null)
-        .build();
+            .cycleName(cycleName)
+            .totalAppraisals(total)
+            .pending(pending)
+            .employeeDraft(employeeDraft)
+            .selfSubmitted(selfSubmitted)
+            .managerDraft(managerDraft)
+            .managerReviewed(managerReviewed)
+            .approved(approved)
+            .acknowledged(acknowledged)
+            .completionPercentage(completionPct)
+            .averageManagerRating(avgRating != null ? Math.round(avgRating * 10.0) / 10.0 : null)
+            .build();
   }
 
   // ── Department Report ─────────────────────────────────────────
@@ -92,7 +92,7 @@ public class ReportServiceImpl implements ReportService {
 
     // Index appraisals by employee id for fast lookup
     Map<Long, Appraisal> appraisalByEmployee = cycleAppraisals.stream()
-        .collect(Collectors.toMap(a -> a.getEmployee().getId(), a -> a, (a, b) -> a));
+            .collect(Collectors.toMap(a -> a.getEmployee().getId(), a -> a, (a, b) -> a));
 
     List<DepartmentReportResponse> result = new ArrayList<>();
 
@@ -113,7 +113,7 @@ public class ReportServiceImpl implements ReportService {
           continue;
         }
         if (a.getAppraisalStatus() == AppraisalStatus.APPROVED
-            || a.getAppraisalStatus() == AppraisalStatus.ACKNOWLEDGED) {
+                || a.getAppraisalStatus() == AppraisalStatus.ACKNOWLEDGED) {
           completed++;
           if (a.getManagerRating() != null) {
             ratingSum += a.getManagerRating();
@@ -125,16 +125,16 @@ public class ReportServiceImpl implements ReportService {
       }
 
       Double avgRating = ratingCount > 0
-          ? Math.round((ratingSum / ratingCount) * 10.0) / 10.0
-          : null;
+              ? Math.round((ratingSum / ratingCount) * 10.0) / 10.0
+              : null;
 
       result.add(DepartmentReportResponse.builder()
-          .departmentName(dept.getName())
-          .totalEmployees(employees.size())
-          .completed(completed)
-          .pending(pending)
-          .averageRating(avgRating)
-          .build());
+              .departmentName(dept.getName())
+              .totalEmployees(employees.size())
+              .completed(completed)
+              .pending(pending)
+              .averageRating(avgRating)
+              .build());
     }
 
     return result;
@@ -164,11 +164,11 @@ public class ReportServiceImpl implements ReportService {
     Double avg = appraisalRepository.averageManagerRatingForCycle(cycleName);
 
     return RatingDistributionResponse.builder()
-        .cycleName(cycleName)
-        .totalRated(total)
-        .distribution(distribution)
-        .averageRating(avg != null ? Math.round(avg * 10.0) / 10.0 : null)
-        .build();
+            .cycleName(cycleName)
+            .totalRated(total)
+            .distribution(distribution)
+            .averageRating(avg != null ? Math.round(avg * 10.0) / 10.0 : null)
+            .build();
   }
 
   // ── Pending Report ────────────────────────────────────────────
@@ -180,22 +180,22 @@ public class ReportServiceImpl implements ReportService {
     List<Appraisal> pending = appraisalRepository.findPendingAppraisalsForCycle(cycleName);
 
     List<PendingReportResponse.PendingEntry> entries = pending.stream()
-        .map(a -> PendingReportResponse.PendingEntry.builder()
-            .employeeId(a.getEmployee().getId())
-            .employeeName(a.getEmployee().getFullName())
-            .managerName(a.getManager().getFullName())
-            .departmentName(a.getEmployee().getDepartment() != null
-                ? a.getEmployee().getDepartment().getName()
-                : null)
-            .currentStatus(a.getAppraisalStatus())
-            .build())
-        .collect(Collectors.toList());
+            .map(a -> PendingReportResponse.PendingEntry.builder()
+                    .employeeId(a.getEmployee().getId())
+                    .employeeName(a.getEmployee().getFullName())
+                    .managerName(a.getManager().getFullName())
+                    .departmentName(a.getEmployee().getDepartment() != null
+                            ? a.getEmployee().getDepartment().getName()
+                            : null)
+                    .currentStatus(a.getAppraisalStatus())
+                    .build())
+            .collect(Collectors.toList());
 
     return PendingReportResponse.builder()
-        .cycleName(cycleName)
-        .totalPending(entries.size())
-        .entries(entries)
-        .build();
+            .cycleName(cycleName)
+            .totalPending(entries.size())
+            .entries(entries)
+            .build();
   }
 
   // ── Team Report ───────────────────────────────────────────────
@@ -204,37 +204,37 @@ public class ReportServiceImpl implements ReportService {
   @Transactional(readOnly = true)
   public TeamReportResponse getTeamReport(String cycleName, Long managerId) {
     authorizationService.requireSelfOrHr(
-        managerId,
-        "Access denied: you can only view your own team report");
+            managerId,
+            "Access denied: you can only view your own team report");
     List<Appraisal> appraisals = appraisalRepository.findTeamAppraisalsForCycle(cycleName, managerId);
     Double teamAvg = appraisalRepository.averageRatingForTeam(cycleName, managerId);
 
     String managerName = appraisals.isEmpty() ? "" : appraisals.get(0).getManager().getFullName();
 
     List<TeamReportResponse.TeamMemberReport> members = appraisals.stream()
-        .map(a -> {
-          long totalGoals = goalRepository.countByAppraisalId(a.getId());
-          long goalsCompleted = goalRepository.countByAppraisalIdAndStatus(a.getId(), Goal.Status.COMPLETED);
-          return TeamReportResponse.TeamMemberReport.builder()
-              .employeeId(a.getEmployee().getId())
-              .employeeName(a.getEmployee().getFullName())
-              .jobTitle(a.getEmployee().getJobTitle())
-              .selfRating(a.getSelfRating())
-              .managerRating(a.getManagerRating())
-              .status(a.getAppraisalStatus())
-              .goalsCompleted(goalsCompleted)
-              .totalGoals(totalGoals)
-              .build();
-        })
-        .collect(Collectors.toList());
+            .map(a -> {
+              long totalGoals = goalRepository.countByAppraisalId(a.getId());
+              long goalsCompleted = goalRepository.countByAppraisalIdAndStatus(a.getId(), Goal.Status.COMPLETED);
+              return TeamReportResponse.TeamMemberReport.builder()
+                      .employeeId(a.getEmployee().getId())
+                      .employeeName(a.getEmployee().getFullName())
+                      .jobTitle(a.getEmployee().getJobTitle())
+                      .selfRating(a.getSelfRating())
+                      .managerRating(a.getManagerRating())
+                      .status(a.getAppraisalStatus())
+                      .goalsCompleted(goalsCompleted)
+                      .totalGoals(totalGoals)
+                      .build();
+            })
+            .collect(Collectors.toList());
 
     return TeamReportResponse.builder()
-        .cycleName(cycleName)
-        .managerName(managerName)
-        .totalTeamMembers(members.size())
-        .teamAverageRating(teamAvg != null ? Math.round(teamAvg * 10.0) / 10.0 : null)
-        .members(members)
-        .build();
+            .cycleName(cycleName)
+            .managerName(managerName)
+            .totalTeamMembers(members.size())
+            .teamAverageRating(teamAvg != null ? Math.round(teamAvg * 10.0) / 10.0 : null)
+            .members(members)
+            .build();
   }
 
   // ── Employee History ──────────────────────────────────────────
@@ -243,33 +243,33 @@ public class ReportServiceImpl implements ReportService {
   @Transactional(readOnly = true)
   public EmployeeHistoryResponse getEmployeeHistory(Long employeeId) {
     authorizationService.requireSelfOrHr(
-        employeeId,
-        "Access denied: you can only view your own history");
+            employeeId,
+            "Access denied: you can only view your own history");
     List<Appraisal> history = appraisalRepository.findEmployeeHistory(employeeId);
 
     String employeeName = history.isEmpty()
-        ? userRepository.findById(employeeId)
+            ? userRepository.findById(employeeId)
             .orElseThrow(() -> new ResourceNotFoundException("User", employeeId))
             .getFullName()
-        : history.get(0).getEmployee().getFullName();
+            : history.get(0).getEmployee().getFullName();
 
     List<EmployeeHistoryResponse.CycleRecord> cycles = history.stream()
-        .map(a -> EmployeeHistoryResponse.CycleRecord.builder()
-            .cycleName(a.getCycleName())
-            .cycleStartDate(a.getCycleStartDate())
-            .cycleEndDate(a.getCycleEndDate())
-            .selfRating(a.getSelfRating())
-            .managerRating(a.getManagerRating())
-            .status(a.getAppraisalStatus())
-            .managerName(a.getManager().getFullName())
-            .build())
-        .collect(Collectors.toList());
+            .map(a -> EmployeeHistoryResponse.CycleRecord.builder()
+                    .cycleName(a.getCycleName())
+                    .cycleStartDate(a.getCycleStartDate())
+                    .cycleEndDate(a.getCycleEndDate())
+                    .selfRating(a.getSelfRating())
+                    .managerRating(a.getManagerRating())
+                    .status(a.getAppraisalStatus())
+                    .managerName(a.getManager().getFullName())
+                    .build())
+            .collect(Collectors.toList());
 
     return EmployeeHistoryResponse.builder()
-        .employeeId(employeeId)
-        .employeeName(employeeName)
-        .cycles(cycles)
-        .build();
+            .employeeId(employeeId)
+            .employeeName(employeeName)
+            .cycles(cycles)
+            .build();
   }
 
 }

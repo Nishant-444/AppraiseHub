@@ -6,15 +6,15 @@ import dev.nishants.appraisal.dtos.*;
 
 public interface ReportService {
 
-    CycleSummaryResponse getCycleSummary(String cycleName);
+  CycleSummaryResponse getCycleSummary(String cycleName);
 
-    List<DepartmentReportResponse> getDepartmentReport(String cycleName);
+  List<DepartmentReportResponse> getDepartmentReport(String cycleName);
 
-    RatingDistributionResponse getRatingDistribution(String cycleName);
+  RatingDistributionResponse getRatingDistribution(String cycleName);
 
-    PendingReportResponse getPendingReport(String cycleName);
+  PendingReportResponse getPendingReport(String cycleName);
 
-    TeamReportResponse getTeamReport(String cycleName, Long managerId);
+  TeamReportResponse getTeamReport(String cycleName, Long managerId);
 
-    EmployeeHistoryResponse getEmployeeHistory(Long employeeId);
+  EmployeeHistoryResponse getEmployeeHistory(Long employeeId);
 }

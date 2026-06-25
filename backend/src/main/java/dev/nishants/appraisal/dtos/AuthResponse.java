@@ -9,13 +9,13 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 public class AuthResponse {
-    private String token;
-    private Long userId;
-    private String fullName;
-    private String email;
-    private Role role;
-    private String jobTitle;
-    private String departmentName;
-    private Long managerId;
-    private String managerName;
+  private String token;
+  private Long userId;
+  private String fullName;
+  private String email;
+  private Role role;
+  private String jobTitle;
+  private String departmentName;
+  private Long managerId;
+  private String managerName;
 }
