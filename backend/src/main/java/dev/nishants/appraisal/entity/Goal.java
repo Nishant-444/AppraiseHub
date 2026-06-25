@@ -63,13 +63,13 @@ public class Goal {
       if (value == null)
         return null;
       if ("IN_PROGRESS".equalsIgnoreCase(value))
-        return IN_PROGESS;
+        return Status.IN_PROGRESS;
       return Status.valueOf(value.toUpperCase());
     }
 
     @JsonValue
     public String toJson() {
-      return this == IN_PROGESS ? "IN_PROGRESS" : name();
+      return this == Status.IN_PROGRESS ? "IN_PROGRESS" : name();
     }
   }
 
